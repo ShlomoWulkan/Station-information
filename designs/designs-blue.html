@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>מידע תחנה – וריאציות כחול ישראלי</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #e8eef5;
+      color: #1a2332;
+      direction: rtl;
+      padding: 36px 20px 60px;
+    }
+    h1 { text-align: center; font-size: 26px; color: #003699; margin-bottom: 6px; font-weight: 900; }
+    .subtitle { text-align: center; color: #7a8fa6; font-size: 14px; margin-bottom: 46px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+      gap: 44px;
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+
+    .col { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .label { font-size: 16px; font-weight: 800; color: #003699; text-align: center; }
+    .sub { font-size: 12px; color: #8090a0; text-align: center; margin-top: -8px; }
+
+    .phone {
+      width: 272px; height: 560px;
+      border-radius: 36px;
+      overflow: hidden;
+      border: 7px solid #c8d6e8;
+      box-shadow: 0 20px 60px rgba(0,54,153,0.18), 0 4px 16px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .screen { width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+
+    .sb {
+      height: 22px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 16px;
+      font-size: 9px; font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* Shared button row */
+    .brow {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px;
+    }
+    .brow .ico {
+      width: 40px; height: 40px;
+      border-radius: 11px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .brow .txt h3 { font-size: 13px; font-weight: 700; }
+    .brow .txt p  { font-size: 10px; margin-top: 2px; }
+    .brow .arr { margin-right: auto; font-size: 18px; opacity: 0.35; }
+
+    /* ===== A: Classic Header Banner ===== */
+    .va { background: #f0f4fb; }
+    .va .sb { background: #003699; color: rgba(255,255,255,0.7); }
+    .va .banner {
+      background: linear-gradient(135deg, #003699 0%, #0050cc 100%);
+      padding: 20px 18px 22px;
+      position: relative; overflow: hidden;
+    }
+    .va .banner::after {
+      content: '🚌';
+      position: absolute;
+      left: -8px; bottom: -8px;
+      font-size: 64px;
+      opacity: 0.12;
+      transform: scaleX(-1);
+    }
+    .va .banner h2 { color: #fff; font-size: 20px; font-weight: 900; }
+    .va .banner p { color: rgba(255,255,255,0.65); font-size: 11px; margin-top: 4px; }
+    .va .banner .live {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: white; font-size: 10px; font-weight: 600;
+      padding: 3px 10px; border-radius: 20px; margin-top: 10px;
+    }
+    .va .live .dot { width: 6px; height: 6px; background: #4ade80; border-radius: 50%; }
+    .va .list { padding: 12px 12px 0; display: flex; flex-direction: column; gap: 0; }
+    .va .brow { border-bottom: 1px solid #e8eef6; background: white; }
+    .va .brow:first-child { border-radius: 14px 14px 0 0; }
+    .va .brow:last-child { border-radius: 0 0 14px 14px; border-bottom: none; }
+    .va .ico { background: #eef2ff; }
+    .va .brow .txt h3 { color: #1a2332; }
+    .va .brow .txt p  { color: #8090a0; }
+
+    /* ===== B: Side Accent ===== */
+    .vb { background: #f7f9fc; }
+    .vb .sb { background: #f7f9fc; color: #5a7090; }
+    .vb .toprow {
+      padding: 20px 18px 14px;
+      display: flex; align-items: center; gap: 14px;
+      border-bottom: 2px solid #003699;
+    }
+    .vb .toprow .bus-wrap {
+      width: 50px; height: 50px;
+      background: #003699;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; flex-shrink: 0;
+    }
+    .vb .toprow h2 { font-size: 18px; font-weight: 900; color: #003699; }
+    .vb .toprow p { font-size: 10px; color: #7a8fa6; margin-top: 3px; }
+    .vb .list { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+    .vb .brow {
+      background: white;
+      border-radius: 12px;
+      border-right: 4px solid #003699;
+      box-shadow: 0 1px 6px rgba(0,54,153,0.08);
+      padding: 11px 14px;
+    }
+    .vb .ico { background: #dbeafe; }
+    .vb .brow .txt h3 { color: #1a2332; }
+    .vb .brow .txt p  { color: #8090a0; }
+
+    /* ===== C: Rounded Cards ===== */
+    .vc { background: #f0f4fb; }
+    .vc .sb { background: #003699; color: rgba(255,255,255,0.6); }
+    .vc .hero {
+      background: #003699;
+      padding: 16px 18px 28px;
+      text-align: center;
+    }
+    .vc .hero h2 { color: white; font-size: 18px; font-weight: 900; }
+    .vc .hero p { color: rgba(255,255,255,0.55); font-size: 10px; margin-top: 3px; }
+    .vc .cards {
+      margin: -16px 14px 0;
+      display: flex; flex-direction: column; gap: 9px;
+    }
+    .vc .card {
+      background: white;
+      border-radius: 16px;
+      padding: 13px 16px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 4px 16px rgba(0,54,153,0.1);
+    }
+    .vc .ico {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: #003699;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; color: white; flex-shrink: 0;
+    }
+    .vc .card .txt h3 { font-size: 13px; font-weight: 700; color: #1a2332; }
+    .vc .card .txt p  { font-size: 10px; color: #8090a0; margin-top: 2px; }
+    .vc .card .arr { margin-right: auto; color: #003699; font-size: 16px; opacity: 0.4; }
+
+    /* ===== D: Two-tone Split ===== */
+    .vd { background: white; }
+    .vd .sb { background: white; color: #9aadbe; }
+    .vd .split-top {
+      background: #003699;
+      padding: 18px 18px 40px;
+    }
+    .vd .split-top .row { display: flex; align-items: center; justify-content: space-between; }
+    .vd .split-top h2 { color: white; font-size: 19px; font-weight: 900; }
+    .vd .split-top p { color: rgba(255,255,255,0.5); font-size: 10px; margin-top: 3px; }
+    .vd .split-top .icon-wrap { font-size: 32px; }
+    .vd .bottom-half {
+      background: white;
+      border-radius: 22px 22px 0 0;
+      margin-top: -22px;
+      padding: 16px 14px 0;
+      flex: 1;
+    }
+    .vd .section-title { font-size: 10px; font-weight: 700; color: #9aadbe; text-transform: uppercase; letter-spacing: 1.5px; padding: 0 4px; margin-bottom: 10px; }
+    .vd .brow {
+      background: #f4f8ff;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      padding: 11px 14px;
+    }
+    .vd .ico { background: white; border: 1.5px solid #dbeafe; }
+    .vd .brow .txt h3 { color: #1a2332; }
+    .vd .brow .txt p  { color: #8090a0; }
+
+    /* ===== E: Badge Count Style ===== */
+    .ve { background: #f8fafc; }
+    .ve .sb { background: #003699; color: rgba(255,255,255,0.6); }
+    .ve .topbar {
+      background: linear-gradient(180deg, #003699 0%, #0044b8 100%);
+      padding: 18px 18px 16px;
+    }
+    .ve .topbar .inner { display: flex; align-items: center; justify-content: space-between; }
+    .ve .topbar h2 { color: white; font-size: 17px; font-weight: 900; }
+    .ve .topbar p { color: rgba(255,255,255,0.5); font-size: 10px; margin-top: 2px; }
+    .ve .topbar .avatar {
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .ve .searchbar {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      color: rgba(255,255,255,0.6);
+      font-size: 11px;
+      padding: 7px 12px;
+      margin-top: 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .ve .list { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+    .ve .brow {
+      background: white;
+      border-radius: 14px;
+      padding: 11px 14px;
+      box-shadow: 0 2px 10px rgba(0,54,153,0.07);
+      border: 1.5px solid #e8f0fe;
+    }
+    .ve .ico { background: #003699; }
+    .ve .ico span { filter: brightness(10); }
+    .ve .brow .txt h3 { color: #1a2332; }
+    .ve .brow .txt p  { color: #8090a0; }
+    .ve .badge-num {
+      margin-right: auto;
+      background: #003699; color: white;
+      font-size: 10px; font-weight: 700;
+      min-width: 20px; height: 20px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 5px;
+    }
+    .ve .badge-dot {
+      margin-right: auto;
+      width: 8px; height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+    }
+
+    /* ===== F: Bottom Tab + Hero ===== */
+    .vf { background: #f0f4fb; }
+    .vf .sb { background: #003699; color: rgba(255,255,255,0.6); }
+    .vf .hero {
+      background: linear-gradient(160deg, #003699 0%, #0057cc 100%);
+      padding: 18px 18px 20px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .vf .hero .bus-bg {
+      width: 52px; height: 52px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; flex-shrink: 0;
+    }
+    .vf .hero h2 { color: white; font-size: 17px; font-weight: 900; }
+    .vf .hero p  { color: rgba(255,255,255,0.55); font-size: 10px; margin-top: 3px; }
+    .vf .hero .chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(255,255,255,0.15);
+      color: white; font-size: 9px;
+      padding: 3px 8px; border-radius: 12px; margin-top: 6px;
+    }
+    .vf .list { padding: 12px 14px 6px; display: flex; flex-direction: column; gap: 7px; flex: 1; }
+    .vf .brow {
+      background: white;
+      border-radius: 14px;
+      padding: 11px 14px;
+      box-shadow: 0 2px 8px rgba(0,54,153,0.08);
+    }
+    .vf .ico { background: #eff6ff; border: 1.5px solid #bfdbfe; }
+    .vf .brow .txt h3 { color: #1e3a5f; }
+    .vf .brow .txt p  { color: #94a3b8; }
+    .vf .brow .arr { margin-right: auto; color: #003699; font-size: 16px; opacity: 0.35; }
+    .vf .tabbar {
+      height: 52px;
+      background: white;
+      border-top: 1px solid #e2e8f0;
+      display: flex; align-items: center; justify-content: space-around;
+      flex-shrink: 0;
+    }
+    .vf .tab { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 9px; color: #94a3b8; }
+    .vf .tab.active { color: #003699; }
+    .vf .tab .ti { font-size: 18px; }
+  </style>
+</head>
+<body>
+
+<h1>🚌 מידע תחנה — כחול ישראלי קלאסי</h1>
+<p class="subtitle">6 וריאציות מקצועיות · לבן · כחול · נקי</p>
+
+<div class="grid">
+
+  <!-- A -->
+  <div class="col">
+    <div class="label">A · באנר עם רקע</div>
+    <div class="sub">כותרת מלאה · כפתורים לבנים</div>
+    <div class="phone">
+      <div class="screen va">
+        <div class="sb"><span>9:41</span><span>📶 🔋</span></div>
+        <div class="banner">
+          <h2>מידע תחנה 🚌</h2>
+          <p>זמני הגעת אוטובוסים בישראל</p>
+          <div class="live"><span class="dot"></span>עדכון בזמן אמת</div>
+        </div>
+        <div class="list">
+          <div class="brow"><div class="ico">📍</div><div class="txt"><h3>חיפוש לפי מיקום</h3><p>תחנות עד 100 מטר</p></div><div class="arr">›</div></div>
+          <div class="brow"><div class="ico">🕐</div><div class="txt"><h3>חיפושים אחרונים</h3><p>היסטוריה שמורה</p></div><div class="arr">›</div></div>
+          <div class="brow"><div class="ico">⭐</div><div class="txt"><h3>מועדפות</h3><p>תחנות קבועות</p></div><div class="arr">›</div></div>
+          <div class="brow"><div class="ico">🔢</div><div class="txt"><h3>מספר תחנה</h3><p>הקלד מספר ישיר</p></div><div class="arr">›</div></div>
+          <div class="brow"><div class="ico">🗺</div><div class="txt"><h3>מפה אינטראקטיבית</h3><p>הצג סביבך</p></div><div class="arr">›</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="col">
+    <div class="label">B · קו כחול ימני</div>
+    <div class="sub">לוגו + קו הדגשה צדדי</div>
+    <div class="phone">
+      <div class="screen vb">
+        <div class="sb"><span style="color:#003699;font-weight:800">9:41</span><span style="color:#5a7090">📶 🔋</span></div>
+        <div class="toprow">
+          <div class="bus-wrap">🚌</div>
+          <div>
+            <h2>מידע תחנה</h2>
+            <p>זמני הגעת אוטובוסים · ישראל</p>
+          </div>
+        </div>
+        <div class="list">
+          <div class="brow"><div class="ico">📍</div><div class="txt"><h3>חיפוש לפי מיקום</h3><p>GPS · 100 מטר</p></div><div class="arr">›</div></div>
+          <div class="brow"><div class="ico">🕐</div><div class="txt"><h3>חיפושים אחרונים</h3><p>3 תחנות שמורות</p></div><div class="arr">›</div></div>
+          <div class="brow"><div class="ico">⭐</div><div class="txt"><h3>מועדפות</h3><p>5 תחנות שמורות</p></div><div class="arr">›</div></div>
+          <div class="brow"><div class="ico">🔢</div><div class="txt"><h3>מספר תחנה</h3><p>הקלד ישירות</p></div><div class="arr">›</div></div>
+          <div class="brow"><div class="ico">🗺</div><div class="txt"><h3>מפה</h3><p>הצג תחנות מסביב</p></div><div class="arr">›</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="col">
+    <div class="label">C · Floating Cards</div>
+    <div class="sub">כותרת כחולה + כרטיסים צפים</div>
+    <div class="phone">
+      <div class="screen vc">
+        <div class="sb"><span>9:41</span><span>📶 🔋</span></div>
+        <div class="hero">
+          <h2>מידע תחנה 🚌</h2>
+          <p>זמני הגעה · עדכון חי</p>
+        </div>
+        <div class="cards">
+          <div class="card"><div class="ico">📍</div><div class="txt"><h3>חיפוש לפי מיקום</h3><p>תחנות עד 100 מטר</p></div><div class="arr">›</div></div>
+          <div class="card"><div class="ico">🕐</div><div class="txt"><h3>חיפושים אחרונים</h3><p>היסטוריה שמורה</p></div><div class="arr">›</div></div>
+          <div class="card"><div class="ico">⭐</div><div class="txt"><h3>מועדפות</h3><p>תחנות קבועות</p></div><div class="arr">›</div></div>
+          <div class="card"><div class="ico">🔢</div><div class="txt"><h3>מספר תחנה</h3><p>הקלד מספר ישיר</p></div><div class="arr">›</div></div>
+          <div class="card"><div class="ico">🗺</div><div class="txt"><h3>מפה</h3><p>ויזואלי</p></div><div class="arr">›</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- D -->
+  <div class="col">
+    <div class="label">D · Two-Tone Split</div>
+    <div class="sub">פיצול כחול-לבן + גלילה</div>
+    <div class="phone">
+      <div class="screen vd">
+        <div class="sb"><span>9:41</span><span>📶 🔋</span></div>
+        <div class="split-top">
+          <div class="row">
+            <div>
+              <h2>מידע תחנה</h2>
+              <p>זמני הגעת אוטובוסים</p>
+            </div>
+            <div class="icon-wrap">🚌</div>
+          </div>
+        </div>
+        <div class="bottom-half">
+          <div class="section-title">בחר אפשרות</div>
+          <div class="brow"><div class="ico">📍</div><div class="txt"><h3>חיפוש לפי מיקום</h3><p>GPS · קרוב אליך</p></div><div class="arr">›</div></div>
+          <div class="brow"><div class="ico">🕐</div><div class="txt"><h3>חיפושים אחרונים</h3><p>היסטוריה</p></div><div class="arr">›</div></div>
+          <div class="brow"><div class="ico">⭐</div><div class="txt"><h3>מועדפות</h3><p>תחנות שמורות</p></div><div class="arr">›</div></div>
+          <div class="brow"><div class="ico">🔢</div><div class="txt"><h3>מספר תחנה</h3><p>הקלד מספר</p></div><div class="arr">›</div></div>
+          <div class="brow"><div class="ico">🗺</div><div class="txt"><h3>מפה</h3><p>ויזואלי</p></div><div class="arr">›</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- E -->
+  <div class="col">
+    <div class="label">E · עם חיפוש + Badge</div>
+    <div class="sub">שדה חיפוש + ספירת פריטים</div>
+    <div class="phone">
+      <div class="screen ve">
+        <div class="sb"><span>9:41</span><span>📶 🔋</span></div>
+        <div class="topbar">
+          <div class="inner">
+            <div>
+              <h2>מידע תחנה</h2>
+              <p>זמני הגעת אוטובוסים</p>
+            </div>
+            <div class="avatar">🚌</div>
+          </div>
+          <div class="searchbar">🔍 חפש תחנה...</div>
+        </div>
+        <div class="list">
+          <div class="brow"><div class="ico"><span>📍</span></div><div class="txt"><h3>חיפוש לפי מיקום</h3><p>GPS · 100 מטר</p></div><div class="badge-dot"></div></div>
+          <div class="brow"><div class="ico"><span>🕐</span></div><div class="txt"><h3>חיפושים אחרונים</h3><p>היסטוריה</p></div><div class="badge-num">3</div></div>
+          <div class="brow"><div class="ico"><span>⭐</span></div><div class="txt"><h3>מועדפות</h3><p>תחנות שמורות</p></div><div class="badge-num">5</div></div>
+          <div class="brow"><div class="ico"><span>🔢</span></div><div class="txt"><h3>מספר תחנה</h3><p>הקלד ישיר</p></div><div class="arr">›</div></div>
+          <div class="brow"><div class="ico"><span>🗺</span></div><div class="txt"><h3>מפה</h3><p>ויזואלי</p></div><div class="arr">›</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F -->
+  <div class="col">
+    <div class="label">F · Tab Bar תחתון</div>
+    <div class="sub">Hero + כפתורים + Tabs</div>
+    <div class="phone">
+      <div class="screen vf">
+        <div class="sb"><span>9:41</span><span>📶 🔋</span></div>
+        <div class="hero">
+          <div class="bus-bg">🚌</div>
+          <div>
+            <h2>מידע תחנה</h2>
+            <p>זמני הגעת אוטובוסים</p>
+            <div class="chip">🟢 עדכון חי</div>
+          </div>
+        </div>
+        <div class="list">
+          <div class="brow"><div class="ico">📍</div><div class="txt"><h3>חיפוש לפי מיקום</h3><p>GPS · 100 מטר</p></div><div class="arr">›</div></div>
+          <div class="brow"><div class="ico">🕐</div><div class="txt"><h3>חיפושים אחרונים</h3><p>היסטוריה</p></div><div class="arr">›</div></div>
+          <div class="brow"><div class="ico">⭐</div><div class="txt"><h3>מועדפות</h3><p>תחנות שמורות</p></div><div class="arr">›</div></div>
+          <div class="brow"><div class="ico">🔢</div><div class="txt"><h3>מספר תחנה</h3><p>הקלד ישיר</p></div><div class="arr">›</div></div>
+          <div class="brow"><div class="ico">🗺</div><div class="txt"><h3>מפה</h3><p>ויזואלי</p></div><div class="arr">›</div></div>
+        </div>
+        <div class="tabbar">
+          <div class="tab active"><span class="ti">🏠</span>בית</div>
+          <div class="tab"><span class="ti">⭐</span>מועדפות</div>
+          <div class="tab"><span class="ti">🗺</span>מפה</div>
+          <div class="tab"><span class="ti">⚙️</span>הגדרות</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p style="text-align:center; color:#7a8fa6; margin-top:50px; font-size:13px;">
+  מידע תחנה · בחר וריאנט (A–F) · ניתן לשלב אלמנטים מכמה סגנונות
+</p>
+
+</body>
+</html>

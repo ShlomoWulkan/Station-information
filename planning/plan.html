@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>מידע תחנה – תכנון פרויקט</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f0f4f8;
+      color: #1a2332;
+      direction: rtl;
+    }
+
+    header {
+      background: linear-gradient(135deg, #003699 0%, #0057d9 100%);
+      color: white;
+      padding: 40px 60px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    header .icon { font-size: 52px; }
+    header h1 { font-size: 36px; font-weight: 800; letter-spacing: -0.5px; }
+    header p { font-size: 16px; opacity: 0.85; margin-top: 6px; }
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    main { max-width: 1100px; margin: 0 auto; padding: 40px 30px; }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #003699;
+      border-right: 5px solid #003699;
+      padding-right: 14px;
+      margin-bottom: 20px;
+    }
+
+    .section { margin-bottom: 50px; }
+
+    /* TECH STACK */
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .tech-card {
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      border-top: 4px solid #0057d9;
+    }
+    .tech-card .label { font-size: 11px; font-weight: 700; color: #0057d9; text-transform: uppercase; letter-spacing: 1px; }
+    .tech-card .name { font-size: 18px; font-weight: 700; margin: 6px 0 4px; }
+    .tech-card .desc { font-size: 13px; color: #5a6a7e; line-height: 1.5; }
+
+    /* SCREENS */
+    .screens-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .screen-card {
+      background: white;
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    }
+    .screen-card .num {
+      width: 32px; height: 32px;
+      background: #003699; color: white;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 15px;
+      margin-bottom: 12px;
+    }
+    .screen-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+    .screen-card ul { padding-right: 18px; }
+    .screen-card ul li { font-size: 14px; color: #3a4a5e; margin-bottom: 5px; line-height: 1.5; }
+    .screen-card .flow {
+      background: #f0f4f8;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #5a6a7e;
+      margin-top: 12px;
+      font-family: monospace;
+    }
+
+    /* FOLDER STRUCTURE */
+    .folder-tree {
+      background: #1a2332;
+      color: #e0e8f0;
+      border-radius: 14px;
+      padding: 30px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 2;
+      overflow-x: auto;
+    }
+    .folder-tree .folder { color: #60a5fa; }
+    .folder-tree .file { color: #e0e8f0; }
+    .folder-tree .comment { color: #6b8090; font-style: italic; }
+    .folder-tree .highlight { color: #fbbf24; }
+
+    /* CACHE TABLE */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    }
+    thead { background: #003699; color: white; }
+    thead th { padding: 14px 20px; text-align: right; font-size: 14px; }
+    tbody td { padding: 14px 20px; border-bottom: 1px solid #eef0f3; font-size: 14px; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: #f7f9fc; }
+    .tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .tag-perm { background: #dcfce7; color: #166534; }
+    .tag-temp { background: #fef9c3; color: #854d0e; }
+
+    /* API FLOW */
+    .flow-diagram {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: wrap;
+      background: white;
+      border-radius: 14px;
+      padding: 30px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    }
+    .flow-box {
+      background: #f0f4f8;
+      border: 2px solid #c8d6e5;
+      border-radius: 12px;
+      padding: 16px 22px;
+      text-align: center;
+      min-width: 130px;
+    }
+    .flow-box.primary { background: #003699; color: white; border-color: #003699; }
+    .flow-box.server { background: #1d4ed8; color: white; border-color: #1d4ed8; }
+    .flow-box .icon { font-size: 28px; margin-bottom: 6px; }
+    .flow-box .name { font-size: 13px; font-weight: 700; }
+    .flow-box .sub { font-size: 11px; opacity: 0.75; margin-top: 2px; }
+    .arrow {
+      font-size: 24px;
+      color: #003699;
+      padding: 0 10px;
+      font-weight: 700;
+    }
+
+    /* STEPS */
+    .steps { display: flex; flex-direction: column; gap: 14px; }
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      background: white;
+      border-radius: 12px;
+      padding: 18px 22px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .step-num {
+      min-width: 36px; height: 36px;
+      background: #003699; color: white;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 16px;
+    }
+    .step-content h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .step-content p { font-size: 13px; color: #5a6a7e; line-height: 1.5; }
+    .step-content code {
+      display: inline-block;
+      background: #1a2332;
+      color: #60a5fa;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #8090a0;
+      font-size: 13px;
+      border-top: 1px solid #dde3ea;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="icon">🚌</div>
+  <div>
+    <h1>מידע תחנה – Station Info</h1>
+    <p>תכנון מלא לפרויקט אפליקציית הגעת אוטובוסים בישראל</p>
+    <span class="badge">Expo (React Native) · Python Server · Cache-Only</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- TECH STACK -->
+  <div class="section">
+    <h2>🛠 טכנולוגיות</h2>
+    <div class="tech-grid">
+      <div class="tech-card">
+        <div class="label">Frontend</div>
+        <div class="name">Expo + React Native</div>
+        <div class="desc">iOS + Android מאותו קוד, Expo Router לניווט, TypeScript מלא</div>
+      </div>
+      <div class="tech-card" style="border-color:#22c55e">
+        <div class="label" style="color:#16a34a">Backend</div>
+        <div class="name">Python (FastAPI)</div>
+        <div class="desc">שרת פרוקסי קל, קריאות ל-API של משרד התחבורה, מחזיר JSON לאפליקציה</div>
+      </div>
+      <div class="tech-card" style="border-color:#f59e0b">
+        <div class="label" style="color:#d97706">Cache</div>
+        <div class="name">AsyncStorage</div>
+        <div class="desc">שמירה מקומית: מועדפות + חיפושים אחרונים, ללא בסיס נתונים</div>
+      </div>
+      <div class="tech-card" style="border-color:#a855f7">
+        <div class="label" style="color:#9333ea">State</div>
+        <div class="name">Zustand</div>
+        <div class="desc">ניהול מצב גלובלי קל וקצר, ללא Redux boilerplate</div>
+      </div>
+      <div class="tech-card" style="border-color:#ef4444">
+        <div class="label" style="color:#dc2626">מפות</div>
+        <div class="name">React Native Maps</div>
+        <div class="desc">Google Maps / Apple Maps, Markers לתחנות, Bottom Sheet לפרטים</div>
+      </div>
+      <div class="tech-card" style="border-color:#06b6d4">
+        <div class="label" style="color:#0891b2">GPS</div>
+        <div class="name">expo-location</div>
+        <div class="desc">מיקום משתמש, חיפוש תחנות בטווח 100 מטר</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 SCREENS -->
+  <div class="section">
+    <h2>📱 5 מסכי האפליקציה</h2>
+    <div class="screens-grid">
+      <div class="screen-card">
+        <div class="num">1</div>
+        <h3>📍 חיפוש לפי מיקום</h3>
+        <ul>
+          <li>מבקש הרשאת GPS</li>
+          <li>מציג תחנות עד 100 מטר</li>
+          <li>ממויין לפי מרחק</li>
+          <li>אם אין: הודעה נעימה</li>
+        </ul>
+        <div class="flow">לחיצה → GPS → Spinner → רשימת תחנות</div>
+      </div>
+      <div class="screen-card">
+        <div class="num">2</div>
+        <h3>🕐 חיפושים אחרונים</h3>
+        <ul>
+          <li>שמור ב-AsyncStorage אוטומטית</li>
+          <li>עד 10 חיפושים אחרונים</li>
+          <li>מחיקה בסוויפ שמאלה</li>
+          <li>ריענון בלחיצה</li>
+        </ul>
+        <div class="flow">כל חיפוש → נשמר → מוצג ברשימה</div>
+      </div>
+      <div class="screen-card">
+        <div class="num">3</div>
+        <h3>⭐ מועדפות</h3>
+        <ul>
+          <li>כוכב על כל תחנה → נשמרת</li>
+          <li>גישה מהירה לתחנות קבועות</li>
+          <li>סידור לפי שם / סדר הוספה</li>
+          <li>מחיקה בסוויפ</li>
+        </ul>
+        <div class="flow">⭐ → AsyncStorage → רשימת מועדפות</div>
+      </div>
+      <div class="screen-card">
+        <div class="num">4</div>
+        <h3>🔢 חיפוש לפי מספר תחנה</h3>
+        <ul>
+          <li>מקלדת מספרית</li>
+          <li>חיפוש מיידי תוך הקלדה</li>
+          <li>היסטוריה של מספרים שהוקלדו</li>
+        </ul>
+        <div class="flow">מספר → API → כרטיס תחנה + אוטובוסים</div>
+      </div>
+      <div class="screen-card">
+        <div class="num">5</div>
+        <h3>🗺 חיפוש על מפה</h3>
+        <ul>
+          <li>מפה אינטראקטיבית עם Markers</li>
+          <li>לחיצה על תחנה → Bottom Sheet</li>
+          <li>רשימת אוטובוסים בתחתית</li>
+          <li>מרכוז על מיקום המשתמש</li>
+        </ul>
+        <div class="flow">Map → Marker → Bottom Sheet → אוטובוסים</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOLDER STRUCTURE -->
+  <div class="section">
+    <h2>📁 מבנה קבצים</h2>
+    <div class="folder-tree">
+<span class="folder">Station-information/</span>
+├── <span class="folder">app/</span>                         <span class="comment">← מסכים (Expo Router)</span>
+│   ├── <span class="file">index.tsx</span>                  <span class="comment">← מסך הבית - 5 כפתורים</span>
+│   ├── <span class="file">search-location.tsx</span>        <span class="comment">← חיפוש לפי GPS</span>
+│   ├── <span class="file">recent.tsx</span>                 <span class="comment">← חיפושים אחרונים</span>
+│   ├── <span class="file">favorites.tsx</span>              <span class="comment">← מועדפות</span>
+│   ├── <span class="file">search-number.tsx</span>          <span class="comment">← חיפוש לפי מספר תחנה</span>
+│   └── <span class="file">map.tsx</span>                    <span class="comment">← מפה אינטראקטיבית</span>
+│
+├── <span class="folder">components/</span>                  <span class="comment">← רכיבים קטנים ← פחות מ-100 שורות</span>
+│   ├── <span class="file">StationCard.tsx</span>            <span class="comment">← כרטיס תחנה</span>
+│   ├── <span class="file">BusArrivalRow.tsx</span>          <span class="comment">← שורת אוטובוס + ספירה לאחור</span>
+│   ├── <span class="file">SearchBar.tsx</span>              <span class="comment">← שדה חיפוש</span>
+│   ├── <span class="file">EmptyState.tsx</span>             <span class="comment">← "לא נמצאו תחנות"</span>
+│   └── <span class="file">SkeletonLoader.tsx</span>         <span class="comment">← אנימציית טעינה</span>
+│
+├── <span class="folder">hooks/</span>                       <span class="comment">← לוגיקה עסקית</span>
+│   ├── <span class="file">useLocation.ts</span>             <span class="comment">← GPS + הרשאות</span>
+│   ├── <span class="file">useNearbyStations.ts</span>       <span class="comment">← חיפוש תחנות קרובות</span>
+│   ├── <span class="file">useBusArrivals.ts</span>          <span class="comment">← נתוני הגעה + Polling</span>
+│   └── <span class="file">useCache.ts</span>                <span class="comment">← AsyncStorage read/write</span>
+│
+├── <span class="folder">services/</span>                    <span class="comment">← תקשורת</span>
+│   ├── <span class="file">api.ts</span>                     <span class="comment">← קריאות ל-Python server</span>
+│   └── <span class="file">mockData.ts</span>               <span class="comment">← נתוני דמו לפיתוח</span>
+│
+├── <span class="folder">store/</span>                       <span class="comment">← Zustand state</span>
+│   ├── <span class="file">favoritesStore.ts</span>
+│   └── <span class="file">recentStore.ts</span>
+│
+├── <span class="folder">constants/</span>
+│   └── <span class="file">theme.ts</span>                   <span class="comment">← צבעים, גופנים, מרווחים</span>
+│
+└── <span class="folder">server/</span>                      <span class="comment">← שרת Python</span>
+    ├── <span class="highlight">main.py</span>                    <span class="comment">← FastAPI פרוקסי ל-MOT API</span>
+    ├── <span class="file">routes/</span>
+    │   └── <span class="file">arrivals.py</span>            <span class="comment">← endpoint: GET /arrivals</span>
+    └── <span class="file">requirements.txt</span>
+    </div>
+  </div>
+
+  <!-- API FLOW -->
+  <div class="section">
+    <h2>🌐 זרימת נתונים – API</h2>
+    <div class="flow-diagram">
+      <div class="flow-box primary">
+        <div class="icon">📱</div>
+        <div class="name">אפליקציה</div>
+        <div class="sub">Expo React Native</div>
+      </div>
+      <div class="arrow">←→</div>
+      <div class="flow-box server">
+        <div class="icon">🐍</div>
+        <div class="name">Python Server</div>
+        <div class="sub">FastAPI · IP קבוע</div>
+      </div>
+      <div class="arrow">←→</div>
+      <div class="flow-box">
+        <div class="icon">🏛</div>
+        <div class="name">MOT API</div>
+        <div class="sub">משרד התחבורה XML</div>
+      </div>
+    </div>
+    <div style="background:white; border-radius:12px; padding:20px; margin-top:16px; box-shadow:0 2px 10px rgba(0,0,0,0.06); font-family:monospace; font-size:14px; line-height:2;">
+      <span style="color:#16a34a">GET</span> <span style="color:#003699">/arrivals?station_id=12345</span> → XML → <span style="color:#16a34a">JSON</span><br>
+      <span style="color:#16a34a">GET</span> <span style="color:#003699">/stations/nearby?lat=32.08&lon=34.78&radius=100</span> → <span style="color:#16a34a">JSON</span><br>
+      <span style="color:#8090a0"># בפיתוח: USE_MOCK=true → mockData.ts, ללא שרת</span>
+    </div>
+  </div>
+
+  <!-- CACHE TABLE -->
+  <div class="section">
+    <h2>💾 Cache – מה נשמר ואיך</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>מה נשמר</th>
+          <th>איפה</th>
+          <th>כמה זמן</th>
+          <th>מקסימום</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>⭐ מועדפות</td>
+          <td>AsyncStorage</td>
+          <td><span class="tag tag-perm">לצמיתות</span></td>
+          <td>ללא הגבלה</td>
+        </tr>
+        <tr>
+          <td>🕐 חיפושים אחרונים</td>
+          <td>AsyncStorage</td>
+          <td><span class="tag tag-perm">לצמיתות</span></td>
+          <td>10 פריטים</td>
+        </tr>
+        <tr>
+          <td>🚌 נתוני הגעה</td>
+          <td>זיכרון (RAM)</td>
+          <td><span class="tag tag-temp">30 שניות</span></td>
+          <td>–</td>
+        </tr>
+        <tr>
+          <td>📍 תחנות קרובות</td>
+          <td>זיכרון (RAM)</td>
+          <td><span class="tag tag-temp">עד GPS חדש</span></td>
+          <td>–</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- STEPS -->
+  <div class="section">
+    <h2>🚀 שלבי פיתוח</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>הקמת פרויקט Expo</h4>
+          <p>יצירת פרויקט בסיסי עם TypeScript, Expo Router, הגדרת RTL לעברית.</p>
+          <code>pnpm create expo-app . --template blank-typescript</code>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>עיצוב בסיסי + Theme</h4>
+          <p>הגדרת צבעים, גופנים, מרווחים ב-theme.ts. בניית StationCard ו-BusArrivalRow.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Mock Data + UI מלא</h4>
+          <p>כל המסכים עובדים עם נתוני דמו. כך אפשר לפתח UI ללא תלות בשרת.</p>
+          <code>USE_MOCK=true</code>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>Cache – מועדפות + אחרונים</h4>
+          <p>בניית useCache.ts, Zustand stores, AsyncStorage ל-favorites ו-recent.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h4>GPS + מפה</h4>
+          <p>expo-location לחיפוש לפי מיקום, react-native-maps למסך המפה.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <h4>שרת Python (FastAPI)</h4>
+          <p>פרוקסי בין האפליקציה ל-API של משרד התחבורה, מחזיר JSON, IP קבוע.</p>
+          <code>uvicorn main:app --host 0.0.0.0 --port 8000</code>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">7</div>
+        <div class="step-content">
+          <h4>חיבור ל-API אמיתי</h4>
+          <p>החלפת mockData.ts בקריאות אמיתיות לשרת Python, בדיקות End-to-End.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  מידע תחנה · Station Info · תכנון פרויקט · 2025
+</footer>
+
+</body>
+</html>

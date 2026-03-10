@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "מידע תחנה",
+    "slug": "midaa-tachana",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "midaatachana",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "האפליקציה צריכה גישה למיקום כדי למצוא תחנות קרובות"
+        }
+      ]
+    ],
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#000d28"
+      },
+      "package": "com.midaatachana.app"
+    },
+    "ios": {
+      "bundleIdentifier": "com.midaatachana.app"
+    },
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

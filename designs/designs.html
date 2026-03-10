@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>מידע תחנה – 5 דוגמאות עיצוב</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      direction: rtl;
+      padding: 30px 20px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+    .subtitle {
+      text-align: center;
+      color: #aaa;
+      margin-bottom: 40px;
+      font-size: 15px;
+    }
+
+    .designs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 40px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .design-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .design-label {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+    }
+    .design-sub {
+      font-size: 13px;
+      color: #888;
+      text-align: center;
+      margin-top: -10px;
+    }
+
+    /* PHONE FRAME */
+    .phone {
+      width: 290px;
+      height: 580px;
+      border-radius: 38px;
+      overflow: hidden;
+      border: 8px solid #2a2a3e;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.07);
+      position: relative;
+      flex-shrink: 0;
+    }
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ============ DESIGN 1: Israeli Blue Classic ============ */
+    .d1 { background: #f4f6fb; }
+    .d1 .top-bar {
+      background: #003699;
+      padding: 28px 20px 20px;
+      text-align: center;
+    }
+    .d1 .top-bar .app-icon { font-size: 28px; }
+    .d1 .top-bar h2 { color: white; font-size: 20px; font-weight: 800; margin: 4px 0; }
+    .d1 .top-bar p { color: rgba(255,255,255,0.7); font-size: 11px; }
+    .d1 .btn-list { padding: 16px 14px; display: flex; flex-direction: column; gap: 10px; }
+    .d1 .btn {
+      background: white;
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 10px rgba(0,54,153,0.1);
+      border: 1.5px solid #e8eef8;
+    }
+    .d1 .btn .ico {
+      width: 40px; height: 40px;
+      background: #003699;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: white;
+      flex-shrink: 0;
+    }
+    .d1 .btn .txt h3 { font-size: 13px; font-weight: 700; color: #1a2332; }
+    .d1 .btn .txt p { font-size: 10px; color: #8090a0; margin-top: 2px; }
+    .d1 .btn .arrow { margin-right: auto; color: #003699; font-size: 16px; }
+
+    /* ============ DESIGN 2: Dark Night Mode ============ */
+    .d2 { background: #0d1117; }
+    .d2 .top-bar {
+      background: linear-gradient(180deg, #161b22 0%, #0d1117 100%);
+      padding: 28px 20px 16px;
+      border-bottom: 1px solid #21262d;
+    }
+    .d2 .top-bar .row { display: flex; align-items: center; gap: 10px; }
+    .d2 .top-bar h2 { color: #f0f6fc; font-size: 18px; font-weight: 700; }
+    .d2 .top-bar p { color: #8b949e; font-size: 11px; margin-top: 4px; }
+    .d2 .btn-list { padding: 14px 14px; display: flex; flex-direction: column; gap: 8px; }
+    .d2 .btn {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 13px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .d2 .btn .ico {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .d2 .ico1 { background: #1f6feb22; border: 1px solid #1f6feb; }
+    .d2 .ico2 { background: #3fb95022; border: 1px solid #3fb950; }
+    .d2 .ico3 { background: #d29922; border: none; }
+    .d2 .ico4 { background: #db613622; border: 1px solid #db6136; }
+    .d2 .ico5 { background: #a371f722; border: 1px solid #a371f7; }
+    .d2 .btn .txt h3 { font-size: 12px; font-weight: 600; color: #e6edf3; }
+    .d2 .btn .txt p { font-size: 10px; color: #8b949e; margin-top: 1px; }
+    .d2 .btn .arrow { margin-right: auto; color: #8b949e; font-size: 14px; }
+
+    /* ============ DESIGN 3: Gradient Vibrant ============ */
+    .d3 { background: linear-gradient(160deg, #1a0533 0%, #0a0a2e 50%, #001a33 100%); }
+    .d3 .top-bar {
+      padding: 28px 20px 16px;
+      text-align: center;
+    }
+    .d3 .top-bar .glow {
+      font-size: 32px;
+      filter: drop-shadow(0 0 12px #a855f7);
+    }
+    .d3 .top-bar h2 { color: #fff; font-size: 18px; font-weight: 800; margin: 6px 0 2px; }
+    .d3 .top-bar p { color: #9ca3af; font-size: 10px; }
+    .d3 .btn-list { padding: 10px 14px; display: flex; flex-direction: column; gap: 9px; }
+    .d3 .btn {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 14px;
+      padding: 13px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .d3 .ico1 { background: linear-gradient(135deg,#7c3aed,#6d28d9); border-radius: 10px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .d3 .ico2 { background: linear-gradient(135deg,#059669,#047857); border-radius: 10px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .d3 .ico3 { background: linear-gradient(135deg,#d97706,#b45309); border-radius: 10px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .d3 .ico4 { background: linear-gradient(135deg,#dc2626,#b91c1c); border-radius: 10px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .d3 .ico5 { background: linear-gradient(135deg,#0284c7,#0369a1); border-radius: 10px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .d3 .btn .txt h3 { font-size: 12px; font-weight: 700; color: #f9fafb; }
+    .d3 .btn .txt p { font-size: 10px; color: #9ca3af; margin-top: 1px; }
+    .d3 .btn .arrow { margin-right: auto; color: #6b7280; font-size: 14px; }
+
+    /* ============ DESIGN 4: Card Grid 2x2+1 ============ */
+    .d4 { background: #f8fafc; }
+    .d4 .top-bar {
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 24px 18px 14px;
+    }
+    .d4 .top-bar .row { display: flex; align-items: center; gap: 8px; }
+    .d4 .top-bar h2 { font-size: 18px; font-weight: 800; color: #0f172a; }
+    .d4 .top-bar p { color: #64748b; font-size: 11px; margin-top: 3px; }
+    .d4 .grid-area { padding: 14px 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .d4 .card {
+      border-radius: 16px;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      min-height: 90px;
+    }
+    .d4 .card .ico { font-size: 22px; }
+    .d4 .card h3 { font-size: 12px; font-weight: 700; line-height: 1.3; }
+    .d4 .card p { font-size: 10px; opacity: 0.7; }
+    .d4 .c1 { background: #dbeafe; color: #1e40af; }
+    .d4 .c2 { background: #dcfce7; color: #166534; }
+    .d4 .c3 { background: #fef9c3; color: #854d0e; }
+    .d4 .c4 { background: #fee2e2; color: #991b1b; }
+    .d4 .c5 {
+      grid-column: span 2;
+      background: #003699;
+      color: white;
+      flex-direction: row;
+      align-items: center;
+      gap: 14px;
+      min-height: 60px;
+      padding: 14px 18px;
+    }
+    .d4 .c5 .ico { font-size: 26px; }
+    .d4 .c5 h3 { font-size: 14px; font-weight: 700; }
+
+    /* ============ DESIGN 5: Minimal Elegant ============ */
+    .d5 { background: #fafaf9; }
+    .d5 .top-bar {
+      background: white;
+      padding: 28px 20px 18px;
+      border-bottom: 1px solid #e7e5e4;
+    }
+    .d5 .top-bar .small { color: #78716c; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; }
+    .d5 .top-bar h2 { color: #1c1917; font-size: 24px; font-weight: 800; margin-top: 4px; }
+    .d5 .btn-list { padding: 16px 18px; display: flex; flex-direction: column; gap: 0; }
+    .d5 .btn {
+      background: white;
+      border-bottom: 1px solid #f5f5f4;
+      padding: 15px 6px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .d5 .btn:first-child { border-top: 1px solid #f5f5f4; }
+    .d5 .btn .ico {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+    .d5 .bg1 { background: #f0f9ff; }
+    .d5 .bg2 { background: #f0fdf4; }
+    .d5 .bg3 { background: #fffbeb; }
+    .d5 .bg4 { background: #fff1f2; }
+    .d5 .bg5 { background: #faf5ff; }
+    .d5 .btn .txt h3 { font-size: 13px; font-weight: 600; color: #1c1917; }
+    .d5 .btn .txt p { font-size: 10px; color: #a8a29e; margin-top: 2px; }
+    .d5 .btn .right { margin-right: auto; display: flex; align-items: center; gap: 6px; }
+    .d5 .btn .badge { background: #f5f5f4; color: #78716c; font-size: 10px; padding: 2px 8px; border-radius: 10px; }
+    .d5 .btn .arr { color: #d6d3d1; font-size: 16px; }
+
+    /* STATUS BAR MOCK */
+    .status-bar {
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-size: 9px;
+      font-weight: 600;
+    }
+    .sb-dark { background: #0d1117; color: #8b949e; }
+    .sb-blue { background: #003699; color: rgba(255,255,255,0.8); }
+    .sb-dark2 { background: #1a0533; color: rgba(255,255,255,0.5); }
+    .sb-white { background: white; color: #94a3b8; }
+    .sb-cream { background: white; color: #a8a29e; }
+  </style>
+</head>
+<body>
+
+<h1>🚌 מידע תחנה – דוגמאות עיצוב</h1>
+<p class="subtitle">5 סגנונות שונים למסך הבית · בחר את הסגנון המועדף עליך</p>
+
+<div class="designs-grid">
+
+  <!-- DESIGN 1 -->
+  <div class="design-wrapper">
+    <div class="design-label">1 · כחול ישראלי קלאסי</div>
+    <div class="design-sub">מקצועי · נגיש · מוכר</div>
+    <div class="phone">
+      <div class="phone-screen d1">
+        <div class="status-bar sb-blue">
+          <span>9:41</span><span>📶 🔋</span>
+        </div>
+        <div class="top-bar">
+          <div class="app-icon">🚌</div>
+          <h2>מידע תחנה</h2>
+          <p>זמני הגעת אוטובוסים בישראל</p>
+        </div>
+        <div class="btn-list">
+          <div class="btn">
+            <div class="ico">📍</div>
+            <div class="txt"><h3>חיפוש לפי מיקום</h3><p>תחנות בקרבת מקומך</p></div>
+            <div class="arrow">›</div>
+          </div>
+          <div class="btn">
+            <div class="ico">🕐</div>
+            <div class="txt"><h3>חיפושים אחרונים</h3><p>3 תחנות שמורות</p></div>
+            <div class="arrow">›</div>
+          </div>
+          <div class="btn">
+            <div class="ico">⭐</div>
+            <div class="txt"><h3>מועדפות</h3><p>5 תחנות מועדפות</p></div>
+            <div class="arrow">›</div>
+          </div>
+          <div class="btn">
+            <div class="ico">🔢</div>
+            <div class="txt"><h3>חיפוש לפי מספר</h3><p>הקלד מספר תחנה</p></div>
+            <div class="arrow">›</div>
+          </div>
+          <div class="btn">
+            <div class="ico">🗺</div>
+            <div class="txt"><h3>חיפוש על מפה</h3><p>הצג תחנות סביבך</p></div>
+            <div class="arrow">›</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESIGN 2 -->
+  <div class="design-wrapper">
+    <div class="design-label">2 · מצב לילה (Dark Mode)</div>
+    <div class="design-sub">מודרני · עיניים נוחות · GitHub סגנון</div>
+    <div class="phone">
+      <div class="phone-screen d2">
+        <div class="status-bar sb-dark">
+          <span>9:41</span><span>📶 🔋</span>
+        </div>
+        <div class="top-bar">
+          <div class="row">
+            <span style="font-size:22px">🚌</span>
+            <div>
+              <h2>מידע תחנה</h2>
+              <p>זמני הגעת אוטובוסים</p>
+            </div>
+          </div>
+        </div>
+        <div class="btn-list">
+          <div class="btn">
+            <div class="ico ico1">📍</div>
+            <div class="txt"><h3>חיפוש לפי מיקום</h3><p>תחנות עד 100 מטר</p></div>
+            <div class="arrow">›</div>
+          </div>
+          <div class="btn">
+            <div class="ico ico2">🕐</div>
+            <div class="txt"><h3>חיפושים אחרונים</h3><p>היסטוריית חיפושים</p></div>
+            <div class="arrow">›</div>
+          </div>
+          <div class="btn">
+            <div class="ico ico3">⭐</div>
+            <div class="txt"><h3>מועדפות</h3><p>תחנות שמורות</p></div>
+            <div class="arrow">›</div>
+          </div>
+          <div class="btn">
+            <div class="ico ico4">🔢</div>
+            <div class="txt"><h3>מספר תחנה</h3><p>חיפוש ישיר</p></div>
+            <div class="arrow">›</div>
+          </div>
+          <div class="btn">
+            <div class="ico ico5">🗺</div>
+            <div class="txt"><h3>מפה אינטראקטיבית</h3><p>הצג סביב מיקומך</p></div>
+            <div class="arrow">›</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESIGN 3 -->
+  <div class="design-wrapper">
+    <div class="design-label">3 · גרדיאנט ססגוני</div>
+    <div class="design-sub">עז · צעיר · Glassmorphism</div>
+    <div class="phone">
+      <div class="phone-screen d3">
+        <div class="status-bar sb-dark2">
+          <span>9:41</span><span>📶 🔋</span>
+        </div>
+        <div class="top-bar">
+          <div class="glow">🚌</div>
+          <h2>מידע תחנה</h2>
+          <p>זמני הגעת אוטובוסים · ישראל</p>
+        </div>
+        <div class="btn-list">
+          <div class="btn">
+            <div class="ico1">📍</div>
+            <div class="txt"><h3>חיפוש לפי מיקום</h3><p>תחנות בקרבתך</p></div>
+            <div class="arrow">›</div>
+          </div>
+          <div class="btn">
+            <div class="ico2">🕐</div>
+            <div class="txt"><h3>חיפושים אחרונים</h3><p>היסטוריה שמורה</p></div>
+            <div class="arrow">›</div>
+          </div>
+          <div class="btn">
+            <div class="ico3">⭐</div>
+            <div class="txt"><h3>מועדפות</h3><p>תחנות קבועות</p></div>
+            <div class="arrow">›</div>
+          </div>
+          <div class="btn">
+            <div class="ico4">🔢</div>
+            <div class="txt"><h3>מספר תחנה</h3><p>הקלד מספר</p></div>
+            <div class="arrow">›</div>
+          </div>
+          <div class="btn">
+            <div class="ico5">🗺</div>
+            <div class="txt"><h3>מפה</h3><p>חיפוש ויזואלי</p></div>
+            <div class="arrow">›</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESIGN 4 -->
+  <div class="design-wrapper">
+    <div class="design-label">4 · כרטיסים צבעוניים</div>
+    <div class="design-sub">שמח · ברור · Grid Layout</div>
+    <div class="phone">
+      <div class="phone-screen d4">
+        <div class="status-bar sb-white">
+          <span style="color:#64748b">9:41</span><span style="color:#64748b">📶 🔋</span>
+        </div>
+        <div class="top-bar">
+          <div class="row">
+            <span style="font-size:22px">🚌</span>
+            <div>
+              <h2>מידע תחנה</h2>
+              <p>בחר אפשרות חיפוש</p>
+            </div>
+          </div>
+        </div>
+        <div class="grid-area">
+          <div class="card c1">
+            <div class="ico">📍</div>
+            <h3>חיפוש לפי מיקום</h3>
+            <p>GPS · 100 מטר</p>
+          </div>
+          <div class="card c2">
+            <div class="ico">🕐</div>
+            <h3>חיפושים אחרונים</h3>
+            <p>היסטוריה</p>
+          </div>
+          <div class="card c3">
+            <div class="ico">⭐</div>
+            <h3>מועדפות</h3>
+            <p>תחנות שמורות</p>
+          </div>
+          <div class="card c4">
+            <div class="ico">🔢</div>
+            <h3>מספר תחנה</h3>
+            <p>חיפוש ישיר</p>
+          </div>
+          <div class="card c5">
+            <div class="ico">🗺</div>
+            <div>
+              <h3>חיפוש על מפה אינטראקטיבית</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESIGN 5 -->
+  <div class="design-wrapper">
+    <div class="design-label">5 · מינימל אלגנטי</div>
+    <div class="design-sub">נקי · בוגר · iOS Native סגנון</div>
+    <div class="phone">
+      <div class="phone-screen d5">
+        <div class="status-bar sb-cream">
+          <span style="color:#1c1917;font-weight:700">9:41</span>
+          <span style="color:#1c1917">📶 🔋</span>
+        </div>
+        <div class="top-bar">
+          <div class="small">ברוך הבא</div>
+          <h2>מידע תחנה 🚌</h2>
+        </div>
+        <div class="btn-list">
+          <div class="btn">
+            <div class="ico bg1">📍</div>
+            <div class="txt"><h3>חיפוש לפי מיקום</h3><p>תחנות עד 100 מטר</p></div>
+            <div class="right"><div class="arr">›</div></div>
+          </div>
+          <div class="btn">
+            <div class="ico bg2">🕐</div>
+            <div class="txt"><h3>חיפושים אחרונים</h3><p>היסטוריית חיפושים</p></div>
+            <div class="right"><div class="badge">3</div><div class="arr">›</div></div>
+          </div>
+          <div class="btn">
+            <div class="ico bg3">⭐</div>
+            <div class="txt"><h3>מועדפות</h3><p>תחנות שמורות</p></div>
+            <div class="right"><div class="badge">5</div><div class="arr">›</div></div>
+          </div>
+          <div class="btn">
+            <div class="ico bg4">🔢</div>
+            <div class="txt"><h3>מספר תחנה</h3><p>הקלד מספר ישירות</p></div>
+            <div class="right"><div class="arr">›</div></div>
+          </div>
+          <div class="btn">
+            <div class="ico bg5">🗺</div>
+            <div class="txt"><h3>חיפוש על מפה</h3><p>הצג תחנות באזורך</p></div>
+            <div class="right"><div class="arr">›</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p style="text-align:center; color:#555; margin-top:40px; font-size:14px;">
+  בחר עיצוב (1–5) · ניתן לשלב אלמנטים מעיצובים שונים
+</p>
+
+</body>
+</html>
