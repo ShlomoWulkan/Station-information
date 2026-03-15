@@ -1,10 +1,10 @@
 import time
-from typing import Any
+from typing import Any, Optional
 
 _store: dict[str, tuple[Any, float]] = {}
 
 
-def get(key: str, ttl: int) -> Any | None:
+def get(key: str, ttl: int) -> Optional[Any]:
     """מחזיר ערך מה-cache אם עדיין בתוקף, אחרת None."""
     entry = _store.get(key)
     if entry is None:
