@@ -24,17 +24,10 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="settings"
         options={{
-          title: 'בית',
-          tabBarIcon: ({ color }) => <TabIcon emoji="🏠" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="favorites"
-        options={{
-          title: 'מועדפים',
-          tabBarIcon: ({ color }) => <TabIcon emoji="⭐" color={color} />,
+          title: 'הגדרות',
+          tabBarIcon: ({ color }) => <TabIcon emoji="⚙️" color={color} />,
         }}
       />
       <Tabs.Screen
@@ -45,10 +38,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="favorites"
         options={{
-          title: 'הגדרות',
-          tabBarIcon: ({ color }) => <TabIcon emoji="⚙️" color={color} />,
+          title: 'מועדפים',
+          tabBarIcon: ({ color }) => <TabIcon emoji="⭐" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'בית',
+          tabBarIcon: ({ color }) => <TabIcon emoji="🏠" color={color} />,
         }}
       />
     </Tabs>

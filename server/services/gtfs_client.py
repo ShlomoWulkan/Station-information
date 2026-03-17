@@ -65,5 +65,13 @@ def get_stop_name(stop_code: str) -> str:
     return ""
 
 
+def get_stop_by_code(stop_code: str) -> dict | None:
+    """מחזיר פרטי תחנה מלאים לפי קוד."""
+    for stop in _stops:
+        if stop["code"] == stop_code or stop["id"] == stop_code:
+            return stop
+    return None
+
+
 def stops_count() -> int:
     return len(_stops)
