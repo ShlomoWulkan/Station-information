@@ -1,9 +1,8 @@
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { StationCard } from '@/components/StationCard';
-import { colors, spacing, radius } from '@/constants/theme';
-import { getArrivals } from '@/services/mockData';
+import { StationRow } from '@/components/StationRow';
+import { colors, spacing } from '@/constants/theme';
 import { useRecent } from '@/store/recentStore';
 
 export default function RecentScreen() {
@@ -33,7 +32,7 @@ export default function RecentScreen() {
             </View>
           ) : (
             recent.map(s => (
-              <StationCard key={s.id} station={s} arrivals={getArrivals(s.code)} />
+              <StationRow key={s.id} station={s} />
             ))
           )}
         </ScrollView>

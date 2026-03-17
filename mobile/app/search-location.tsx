@@ -3,9 +3,8 @@ import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, StyleSheet
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import * as Location from 'expo-location';
-import { StationCard } from '@/components/StationCard';
+import { StationRow } from '@/components/StationRow';
 import { colors, spacing, radius } from '@/constants/theme';
-import { getArrivals } from '@/services/mockData';
 import { fetchNearbyStations } from '@/services/api';
 import type { Station } from '@/types';
 
@@ -59,7 +58,7 @@ export default function SearchLocationScreen() {
             <Text style={styles.empty}>לא נמצאו תחנות בקרבת מקומך</Text>
           )}
           {stations.map(s => (
-            <StationCard key={s.id} station={s} arrivals={getArrivals(s.code)} />
+            <StationRow key={s.id} station={s} />
           ))}
         </ScrollView>
       </SafeAreaView>

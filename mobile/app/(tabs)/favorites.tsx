@@ -1,8 +1,7 @@
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StationCard } from '@/components/StationCard';
+import { StationRow } from '@/components/StationRow';
 import { colors, spacing } from '@/constants/theme';
-import { getArrivals } from '@/services/mockData';
 import { useFavorites } from '@/store/favoritesStore';
 
 export default function FavoritesScreen() {
@@ -22,7 +21,7 @@ export default function FavoritesScreen() {
             </View>
           ) : (
             favorites.map(s => (
-              <StationCard key={s.id} station={s} arrivals={getArrivals(s.code)} />
+              <StationRow key={s.id} station={s} />
             ))
           )}
         </ScrollView>
