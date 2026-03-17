@@ -5,7 +5,8 @@ import { router } from 'expo-router';
 import * as Location from 'expo-location';
 import { StationCard } from '@/components/StationCard';
 import { colors, spacing, radius } from '@/constants/theme';
-import { getNearbyStations, getArrivals, USE_MOCK } from '@/services/mockData';
+import { getArrivals } from '@/services/mockData';
+import { fetchNearbyStations } from '@/services/api';
 import type { Station } from '@/types';
 
 export default function SearchLocationScreen() {
@@ -18,14 +19,13 @@ export default function SearchLocationScreen() {
     setLoading(true);
     setError('');
     try {
-      if (!USE_MOCK) {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          setError('נדרשת הרשאת מיקום');
-          return;
-        }
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setError('נדרשת הרשאת מיקום');
+        return;
       }
-      const results = getNearbyStations();
+      const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+      const results = await fetchNearbyStations(loc.coords.latitude, loc.coords.longitude);
       setStations(results);
       setSearched(true);
     } catch {

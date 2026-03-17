@@ -22,7 +22,7 @@ def get_nearby_route():
     """
     lat    = request.args.get("lat",    type=float)
     lon    = request.args.get("lon",    type=float)
-    radius = request.args.get("radius", type=int, default=100)
+    radius = request.args.get("radius", type=int, default=150)
 
     if lat is None or lon is None:
         abort(400, description="נדרשים הפרמטרים lat ו-lon")
