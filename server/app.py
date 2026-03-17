@@ -11,6 +11,7 @@ from flask_cors import CORS
 
 from config import HOST, PORT, API_KEY
 from routes import register_routes
+from services.gtfs_client import load_stops
 
 
 def create_app() -> Flask:
@@ -21,6 +22,8 @@ def create_app() -> Flask:
 
 
 if __name__ == "__main__":
+    print("מוריד תחנות GTFS...")
+    load_stops()
     app = create_app()
     print(f"🚌  שרת מידע תחנה פועל על http://{HOST}:{PORT}")
     print(f"   API key: {'✓ מוגדר' if API_KEY else '✗ חסר — הגדר API_KEY ב-.env'}")
