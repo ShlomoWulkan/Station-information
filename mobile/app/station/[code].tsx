@@ -45,8 +45,8 @@ export default function StationDetailScreen() {
 
         {/* Header */}
         <View style={styles.headerRow}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-            <Text style={styles.backText}>✕</Text>
+          <TouchableOpacity onPress={() => router.back()} style={styles.closeBtn}>
+            <Text style={styles.closeText}>✕</Text>
           </TouchableOpacity>
           <View style={styles.headerInfo}>
             <Text style={styles.stationName}>{station.name}</Text>
@@ -88,6 +88,26 @@ export default function StationDetailScreen() {
         </ScrollView>
 
       </SafeAreaView>
+
+      {/* Tab Bar */}
+      <View style={styles.tabBar}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => router.navigate('/(tabs)/settings')}>
+          <Text style={styles.tabEmoji}>⚙️</Text>
+          <Text style={styles.tabLabel}>הגדרות</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tabItem} onPress={() => router.navigate('/(tabs)/map')}>
+          <Text style={styles.tabEmoji}>🗺️</Text>
+          <Text style={styles.tabLabel}>מפה</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tabItem} onPress={() => router.navigate('/(tabs)/favorites')}>
+          <Text style={styles.tabEmoji}>⭐</Text>
+          <Text style={styles.tabLabel}>מועדפים</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tabItem} onPress={() => router.dismissAll()}>
+          <Text style={styles.tabEmoji}>🏠</Text>
+          <Text style={styles.tabLabel}>בית</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -96,12 +116,17 @@ const styles = StyleSheet.create({
   bg: { flex: 1, backgroundColor: colors.bg },
   safe: { flex: 1, paddingHorizontal: spacing.lg },
   headerRow: { flexDirection: 'row', alignItems: 'center', paddingTop: spacing.lg, marginBottom: spacing.md },
-  backBtn: { marginLeft: spacing.md, padding: spacing.xs },
-  backText: { color: colors.textSub, fontSize: 18 },
+  closeBtn: {
+    width: 32, height: 32, borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    alignItems: 'center', justifyContent: 'center',
+    marginLeft: spacing.sm,
+  },
+  closeText: { color: colors.text, fontSize: 16, fontWeight: '700' },
   headerInfo: { flex: 1, alignItems: 'flex-end' },
   stationName: { fontSize: 18, fontWeight: '800', color: colors.text },
   stationCode: { fontSize: 12, color: colors.textSub, marginTop: 2 },
-  favBtn: { padding: spacing.xs, marginRight: spacing.xs },
+  favBtn: { padding: spacing.xs },
   favIcon: { fontSize: 24 },
   filterInput: {
     backgroundColor: colors.card,
@@ -120,4 +145,16 @@ const styles = StyleSheet.create({
   errorText: { color: '#f87171', fontSize: 14, textAlign: 'center' },
   retryBtn: { backgroundColor: colors.accent, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
   retryText: { color: '#000d28', fontWeight: '800', fontSize: 13 },
+  tabBar: {
+    flexDirection: 'row',
+    backgroundColor: colors.tabBar,
+    borderTopColor: colors.tabBarBorder,
+    borderTopWidth: 1,
+    paddingBottom: 28,
+    paddingTop: 8,
+    height: 72,
+  },
+  tabItem: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 2 },
+  tabEmoji: { fontSize: 20 },
+  tabLabel: { fontSize: 10, fontWeight: '700', color: colors.tabInactive },
 });

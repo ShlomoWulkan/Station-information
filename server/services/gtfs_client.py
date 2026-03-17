@@ -73,5 +73,14 @@ def get_stop_by_code(stop_code: str) -> dict | None:
     return None
 
 
+def get_stops_in_bounds(min_lat: float, max_lat: float, min_lon: float, max_lon: float, limit: int = 300) -> list[dict]:
+    """מחזיר תחנות בתוך מסגרת גיאוגרפית, עד limit תחנות."""
+    results = [
+        stop for stop in _stops
+        if min_lat <= stop["lat"] <= max_lat and min_lon <= stop["lon"] <= max_lon
+    ]
+    return results[:limit]
+
+
 def stops_count() -> int:
     return len(_stops)

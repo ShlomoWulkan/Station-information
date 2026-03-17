@@ -31,7 +31,7 @@ export function StationRow({ station }: Props) {
         )}
       </View>
       <TouchableOpacity onPress={toggleFav} style={styles.favBtn} hitSlop={8}>
-        <Text style={styles.favIcon}>{fav ? '⭐' : '☆'}</Text>
+        <Text style={[styles.favIcon, fav && styles.favIconActive]}>{fav ? '⭐' : '☆'}</Text>
       </TouchableOpacity>
     </TouchableOpacity>
   );
@@ -48,11 +48,12 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     marginBottom: spacing.sm,
   },
-  arrow: { fontSize: 20, color: colors.textSub, marginLeft: spacing.xs },
+  arrow: { fontSize: 20, color: colors.accent, marginLeft: spacing.xs },
   info: { flex: 1, alignItems: 'flex-end' },
   name: { fontSize: 15, fontWeight: '800', color: colors.text },
   code: { fontSize: 11, color: colors.textSub, marginTop: 2 },
   distance: { fontSize: 11, color: colors.accent, marginTop: 2 },
   favBtn: { padding: spacing.xs, marginRight: spacing.xs },
-  favIcon: { fontSize: 22 },
+  favIcon: { fontSize: 22, color: 'rgba(255,255,255,0.5)' },
+  favIconActive: { color: '#facc15' },
 });

@@ -15,14 +15,14 @@ export default function HomeScreen() {
     <View style={styles.bg}>
       <SafeAreaView style={styles.safe}>
         <View style={styles.header}>
+          <Text style={styles.busIcon}>🚌</Text>
           <View>
             <Text style={styles.title}>מידע תחנה</Text>
             <Text style={styles.tagline}>זמני הגעת אוטובוסים · ישראל</Text>
+            <LiveBadge />
           </View>
-          <Text style={styles.busIcon}>🚌</Text>
         </View>
 
-        <LiveBadge />
         <View style={styles.divider} />
 
         <ScrollView

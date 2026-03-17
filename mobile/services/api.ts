@@ -8,6 +8,14 @@ export async function fetchNearbyStations(lat: number, lon: number): Promise<Sta
   return res.json();
 }
 
+export async function fetchStopsInBounds(
+  minLat: number, maxLat: number, minLon: number, maxLon: number
+): Promise<Station[]> {
+  const res = await fetch(`${BASE_URL}/stops?min_lat=${minLat}&max_lat=${maxLat}&min_lon=${minLon}&max_lon=${maxLon}`);
+  if (!res.ok) throw new Error(`שגיאת שרת: ${res.status}`);
+  return res.json();
+}
+
 export async function fetchStation(stationCode: string): Promise<Station> {
   const res = await fetch(`${BASE_URL}/station/${stationCode}`);
   if (res.status === 404) throw new Error(`תחנה ${stationCode} לא נמצאה`);

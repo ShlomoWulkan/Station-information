@@ -22,7 +22,7 @@ export default function RootLayout() {
         <Stack.Screen name="search-location" options={{ presentation: 'modal' }} />
         <Stack.Screen name="search-number" options={{ presentation: 'modal' }} />
         <Stack.Screen name="recent" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="station/[code]" />
+        <Stack.Screen name="station/[code]" options={{ presentation: 'fullScreenModal' }} />
         <Stack.Screen name="+not-found" />
       </Stack>
     </SafeAreaProvider>
