@@ -2,6 +2,7 @@ import { TouchableOpacity, View, Text, StyleSheet, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { useFavorites } from '@/store/favoritesStore';
 import { colors, spacing, radius } from '@/constants/theme';
+import { useA11y } from '@/hooks/useA11y';
 import type { Station } from '@/types';
 
 interface Props {
@@ -11,6 +12,7 @@ interface Props {
 
 export function StationRow({ station, onDelete }: Props) {
   const { isFavorite, add, remove } = useFavorites();
+  const { font, c } = useA11y();
   const fav = isFavorite(station.id);
 
   const onPress = () =>
@@ -36,18 +38,18 @@ export function StationRow({ station, onDelete }: Props) {
             <Text style={styles.deleteIcon}>🗑</Text>
           </TouchableOpacity>
           <View style={styles.infoLeft}>
-            <Text style={styles.name}>{station.name}</Text>
-            <Text style={styles.code}>תחנה {station.code}</Text>
+            <Text style={[styles.name, { fontSize: font(15), color: c.text }]}>{station.name}</Text>
+            <Text style={[styles.code, { fontSize: font(11), color: c.textSub }]}>תחנה {station.code}</Text>
           </View>
         </>
       ) : (
         <>
           <Text style={styles.arrow}>›</Text>
           <View style={styles.info}>
-            <Text style={styles.name}>{station.name}</Text>
-            <Text style={styles.code}>תחנה {station.code}</Text>
+            <Text style={[styles.name, { fontSize: font(15), color: c.text }]}>{station.name}</Text>
+            <Text style={[styles.code, { fontSize: font(11), color: c.textSub }]}>תחנה {station.code}</Text>
             {station.distance !== undefined && (
-              <Text style={styles.distance}>{station.distance} מטר</Text>
+              <Text style={[styles.distance, { fontSize: font(11) }]}>{station.distance} מטר</Text>
             )}
           </View>
           <TouchableOpacity onPress={toggleFav} style={styles.favBtn} hitSlop={8}>

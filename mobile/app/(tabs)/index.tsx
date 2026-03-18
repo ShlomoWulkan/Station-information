@@ -6,10 +6,12 @@ import { LiveBadge } from '@/components/LiveBadge';
 import { colors, spacing, neonColors, iconGradients } from '@/constants/theme';
 import { useFavorites } from '@/store/favoritesStore';
 import { useRecent } from '@/store/recentStore';
+import { useA11y } from '@/hooks/useA11y';
 
 export default function HomeScreen() {
   const favCount = useFavorites(s => s.favorites.length);
   const recentCount = useRecent(s => s.recent.length);
+  const { font, c } = useA11y();
 
   return (
     <View style={styles.bg}>
@@ -19,8 +21,8 @@ export default function HomeScreen() {
             <Text style={styles.busIcon}>🚌</Text>
           </View>
           <View>
-            <Text style={styles.title}>מידע תחנה</Text>
-            <Text style={styles.tagline}>זמני הגעת אוטובוסים · ישראל</Text>
+            <Text style={[styles.title, { fontSize: font(22), color: c.text }]}>מידע תחנה</Text>
+            <Text style={[styles.tagline, { fontSize: font(10), color: c.textMuted }]}>זמני הגעת אוטובוסים · ישראל</Text>
             <LiveBadge />
           </View>
         </View>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import type { BusArrival } from '@/types';
 import { colors, spacing, radius } from '@/constants/theme';
+import { useA11y } from '@/hooks/useA11y';
 
 interface Props {
   arrival: BusArrival;
@@ -10,6 +11,7 @@ interface Props {
 export function BusArrivalRow({ arrival }: Props) {
   const { lineNumber, destination, minutesUntilArrival, isRealTime } = arrival;
   const [minutes, setMinutes] = useState(minutesUntilArrival);
+  const { font, c } = useA11y();
 
   useEffect(() => {
     setMinutes(minutesUntilArrival);
@@ -19,15 +21,17 @@ export function BusArrivalRow({ arrival }: Props) {
 
   const isNow = minutes <= 1;
 
+  const badgeSize = font(28);
+
   return (
-    <View style={styles.row}>
-      <View style={styles.lineBadge}>
-        <Text style={styles.lineNum}>{lineNumber}</Text>
+    <View style={[styles.row, { paddingVertical: font(8) }]}>
+      <View style={[styles.lineBadge, { minWidth: font(36), height: badgeSize }]}>
+        <Text style={[styles.lineNum, { fontSize: font(13) }]}>{lineNumber}</Text>
       </View>
-      <Text style={styles.dest} numberOfLines={1}>{destination}</Text>
+      <Text style={[styles.dest, { fontSize: font(13), color: c.text }]} numberOfLines={1}>{destination}</Text>
       {isRealTime && <View style={styles.liveDot} />}
-      <View style={[styles.timeBadge, isNow && styles.timeBadgeNow]}>
-        <Text style={[styles.timeText, isNow && styles.timeTextNow]}>
+      <View style={[styles.timeBadge, isNow && styles.timeBadgeNow, { borderColor: c.cardBorder, paddingHorizontal: font(10), paddingVertical: font(4) }]}>
+        <Text style={[styles.timeText, isNow && styles.timeTextNow, { fontSize: font(12) }]}>
           {isNow ? 'עכשיו' : `${minutes} דק'`}
         </Text>
       </View>

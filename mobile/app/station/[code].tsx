@@ -18,7 +18,7 @@ export default function StationDetailScreen() {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState('');
 
-  const station: Station = { id: code, code, name: name ?? `תחנה ${code}`, lat: lat ? +lat : undefined, lon: lon ? +lon : undefined };
+  const station: Station = { id: String(code), code: String(code), name: name ?? `תחנה ${code}`, lat: lat ? +lat : undefined, lon: lon ? +lon : undefined };
   const insets = useSafeAreaInsets();
   const { isFavorite, add, remove } = useFavorites();
   const { push: pushRecent } = useRecent();
