@@ -3,9 +3,9 @@ import type { Station, BusArrival } from '@/types';
 export const USE_MOCK = true;
 
 export const mockStations: Station[] = [
-  { id: '1', name: 'רחוב הרצל / דיזנגוף', code: '34512', lat: 32.08, lon: 34.78, distance: 45 },
-  { id: '2', name: 'כיכר רבין', code: '21034', lat: 32.083, lon: 34.781, distance: 80 },
-  { id: '3', name: 'תחנה מרכזית תל אביב', code: '10200', lat: 32.065, lon: 34.777, distance: 95 },
+  { id: '34512', name: 'רחוב הרצל / דיזנגוף', code: '34512', lat: 32.08, lon: 34.78, distance: 45 },
+  { id: '21034', name: 'כיכר רבין', code: '21034', lat: 32.083, lon: 34.781, distance: 80 },
+  { id: '10200', name: 'תחנה מרכזית תל אביב', code: '10200', lat: 32.065, lon: 34.777, distance: 95 },
 ];
 
 export const mockArrivals: Record<string, BusArrival[]> = {
@@ -21,6 +21,11 @@ export const mockArrivals: Record<string, BusArrival[]> = {
   '10200': [
     { lineNumber: '480', destination: 'ירושלים', minutesUntilArrival: 5, isRealTime: true },
     { lineNumber: '240', destination: 'חיפה', minutesUntilArrival: 20, isRealTime: false },
+  ],
+  '47222': [
+    { lineNumber: '400', destination: 'בני ברק', minutesUntilArrival: 2, isRealTime: true },
+    { lineNumber: '12', destination: 'גבעתיים', minutesUntilArrival: 6, isRealTime: true },
+    { lineNumber: '55', destination: 'רמת גן', minutesUntilArrival: 13, isRealTime: false },
   ],
 };
 

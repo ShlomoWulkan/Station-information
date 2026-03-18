@@ -5,7 +5,6 @@ import { router } from 'expo-router';
 import { StationRow } from '@/components/StationRow';
 import { colors, spacing, radius } from '@/constants/theme';
 import { fetchStation } from '@/services/api';
-import { useRecent } from '@/store/recentStore';
 import type { Station } from '@/types';
 
 export default function SearchNumberScreen() {
@@ -13,7 +12,6 @@ export default function SearchNumberScreen() {
   const [station, setStation] = useState<Station | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { push } = useRecent();
 
   const handleSearch = async () => {
     const trimmed = code.trim();
@@ -24,7 +22,6 @@ export default function SearchNumberScreen() {
     try {
       const s = await fetchStation(trimmed);
       setStation(s);
-      push(s);
     } catch {
       setError(`תחנה ${trimmed} לא נמצאה`);
     } finally {

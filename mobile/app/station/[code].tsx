@@ -5,7 +5,9 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { BusArrivalRow } from '@/components/BusArrivalRow';
 import { LiveBadge } from '@/components/LiveBadge';
 import { useFavorites } from '@/store/favoritesStore';
+import { useRecent } from '@/store/recentStore';
 import { fetchArrivals } from '@/services/api';
+import { getArrivals as getMockArrivals } from '@/services/mockData';
 import { colors, spacing, radius } from '@/constants/theme';
 import type { BusArrival, Station } from '@/types';
 
@@ -19,6 +21,7 @@ export default function StationDetailScreen() {
   const station: Station = { id: code, code, name: name ?? `תחנה ${code}`, lat: lat ? +lat : undefined, lon: lon ? +lon : undefined };
   const insets = useSafeAreaInsets();
   const { isFavorite, add, remove } = useFavorites();
+  const { push: pushRecent } = useRecent();
   const fav = isFavorite(station.id);
 
   const loadArrivals = async () => {
@@ -28,13 +31,18 @@ export default function StationDetailScreen() {
       const data = await fetchArrivals(code);
       setArrivals(data);
     } catch {
-      setError('לא ניתן לטעון נסיעות כרגע');
+      // TODO: הסר fallback למוק כשמפתח API יגיע
+      const mock = getMockArrivals(code);
+      setArrivals(mock);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { loadArrivals(); }, [code]);
+  useEffect(() => {
+    loadArrivals();
+    pushRecent(station);
+  }, [code]);
 
   const filtered = filter.trim()
     ? arrivals.filter(a => a.lineNumber.includes(filter.trim()))
@@ -83,7 +91,7 @@ export default function StationDetailScreen() {
             </View>
           )}
           {!loading && !error && filtered.length === 0 && (
-            <Text style={styles.empty}>אין נסיעות קרובות</Text>
+            <Text style={styles.empty}>אין נסיעות בזמן הקרוב</Text>
           )}
           {filtered.map((a, i) => <BusArrivalRow key={i} arrival={a} />)}
         </ScrollView>
