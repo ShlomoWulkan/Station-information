@@ -15,7 +15,9 @@ export default function HomeScreen() {
     <View style={styles.bg}>
       <SafeAreaView style={styles.safe}>
         <View style={styles.header}>
-          <Text style={styles.busIcon}>🚌</Text>
+          <View style={styles.busIconWrap}>
+            <Text style={styles.busIcon}>🚌</Text>
+          </View>
           <View>
             <Text style={styles.title}>מידע תחנה</Text>
             <Text style={styles.tagline}>זמני הגעת אוטובוסים · ישראל</Text>
@@ -89,7 +91,14 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 22, fontWeight: '900', color: '#fff', letterSpacing: -0.5, textAlign: 'right' },
   tagline: { fontSize: 10, color: colors.textMuted, marginTop: 3, textAlign: 'right' },
-  busIcon: { fontSize: 34 },
+  busIconWrap: {
+    width: 52, height: 52, borderRadius: 14,
+    backgroundColor: '#1d4ed8',
+    alignItems: 'center', justifyContent: 'center',
+    shadowColor: '#0ea5e9', shadowOpacity: 0.5, shadowRadius: 12, shadowOffset: { width: 0, height: 0 },
+    elevation: 8,
+  },
+  busIcon: { fontSize: 28 },
   divider: {
     height: 1,
     backgroundColor: colors.divider,

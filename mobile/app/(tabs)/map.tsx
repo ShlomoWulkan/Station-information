@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
 import MapView, { Marker, Region } from 'react-native-maps';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import * as Location from 'expo-location';
 import { fetchStopsInBounds } from '@/services/api';
 import { colors, spacing, radius } from '@/constants/theme';
@@ -17,6 +17,18 @@ export default function MapScreen() {
   const fetchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => { init(); }, []);
+
+  useFocusEffect(useCallback(() => {
+    if (!loading && region) {
+      Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced })
+        .then(loc => {
+          const r: Region = { latitude: loc.coords.latitude, longitude: loc.coords.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 };
+          mapRef.current?.animateToRegion(r, 600);
+          loadStops(r);
+        })
+        .catch(() => {});
+    }
+  }, [loading, region]));
 
   const init = async () => {
     setLoading(true);

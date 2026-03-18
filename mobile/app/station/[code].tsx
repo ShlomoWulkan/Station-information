@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { BusArrivalRow } from '@/components/BusArrivalRow';
 import { LiveBadge } from '@/components/LiveBadge';
@@ -17,6 +17,7 @@ export default function StationDetailScreen() {
   const [filter, setFilter] = useState('');
 
   const station: Station = { id: code, code, name: name ?? `תחנה ${code}`, lat: lat ? +lat : undefined, lon: lon ? +lon : undefined };
+  const insets = useSafeAreaInsets();
   const { isFavorite, add, remove } = useFavorites();
   const fav = isFavorite(station.id);
 
@@ -90,7 +91,7 @@ export default function StationDetailScreen() {
       </SafeAreaView>
 
       {/* Tab Bar */}
-      <View style={styles.tabBar}>
+      <View style={[styles.tabBar, { paddingBottom: insets.bottom + 4, height: 52 + insets.bottom }]}>
         <TouchableOpacity style={styles.tabItem} onPress={() => router.navigate('/(tabs)/settings')}>
           <Text style={styles.tabEmoji}>⚙️</Text>
           <Text style={styles.tabLabel}>הגדרות</Text>
@@ -150,9 +151,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.tabBar,
     borderTopColor: colors.tabBarBorder,
     borderTopWidth: 1,
-    paddingBottom: 28,
     paddingTop: 8,
-    height: 72,
   },
   tabItem: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 2 },
   tabEmoji: { fontSize: 20 },

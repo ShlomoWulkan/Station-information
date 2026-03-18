@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>App Store Preview — מידע תחנה</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #111827; font-family: 'Segoe UI', Arial, sans-serif; padding: 48px 24px; }
+
+  h1 { text-align: center; color: #fff; font-size: 22px; margin-bottom: 6px; }
+  .subtitle { text-align: center; color: rgba(180,210,255,0.4); font-size: 13px; margin-bottom: 48px; }
+
+  /* ── אייקון אפליקציה ── */
+  .icon-section { display: flex; flex-direction: column; align-items: center; gap: 20px; margin-bottom: 56px; }
+  .icon-section h2 { color: rgba(180,210,255,0.5); font-size: 13px; letter-spacing: 1px; }
+  .icons-row { display: flex; align-items: flex-end; gap: 32px; }
+
+  .app-icon {
+    background: linear-gradient(135deg, #1d4ed8, #0ea5e9);
+    border-radius: 22.5%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 32px rgba(14,165,233,0.45), 0 0 0 1px rgba(255,255,255,0.08);
+  }
+  .app-icon-xl { width: 120px; height: 120px; font-size: 60px; border-radius: 27px; }
+  .app-icon-lg { width: 80px; height: 80px; font-size: 40px; border-radius: 18px; }
+  .app-icon-md { width: 60px; height: 60px; font-size: 30px; border-radius: 14px; }
+  .app-icon-sm { width: 40px; height: 40px; font-size: 20px; border-radius: 10px; }
+  .icon-label { color: rgba(180,210,255,0.4); font-size: 11px; text-align: center; margin-top: 6px; }
+
+  /* ── מסכי האפליקציה ── */
+  .screens-section h2 { text-align: center; color: rgba(180,210,255,0.5); font-size: 13px; letter-spacing: 1px; margin-bottom: 28px; }
+  .screens-row { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+
+  .phone {
+    width: 200px;
+    background: #00050f;
+    border-radius: 32px;
+    border: 2px solid rgba(96,165,250,0.2);
+    overflow: hidden;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+    position: relative;
+  }
+  .phone-notch {
+    background: #000;
+    height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 0 0 16px 16px;
+    margin: 0 40px;
+  }
+  .phone-notch-dot { width: 8px; height: 8px; background: #1f2937; border-radius: 50%; }
+  .phone-screen { padding: 12px 12px 0; }
+  .phone-label {
+    text-align: center; color: rgba(180,210,255,0.35); font-size: 11px;
+    padding: 12px 0 16px; letter-spacing: 0.5px;
+  }
+  .phone-tabbar {
+    display: flex; background: rgba(0,20,60,0.95); padding: 8px 0 12px;
+    border-top: 1px solid rgba(96,165,250,0.12);
+  }
+  .phone-tabbar-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .phone-tabbar-item span { font-size: 16px; }
+  .phone-tabbar-item label { font-size: 8px; color: rgba(255,255,255,0.25); }
+  .phone-tabbar-item.active label { color: #60a5fa; }
+
+  /* מסך בית */
+  .screen-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; direction: rtl; }
+  .screen-logo {
+    width: 36px; height: 36px; border-radius: 9px;
+    background: linear-gradient(135deg, #1d4ed8, #0ea5e9);
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+    box-shadow: 0 0 10px rgba(14,165,233,0.4);
+  }
+  .screen-title { font-size: 14px; font-weight: 900; color: #fff; direction: rtl; }
+  .screen-sub { font-size: 7px; color: rgba(255,255,255,0.3); margin-top: 1px; direction: rtl; }
+  .live-badge {
+    display: flex; align-items: center; gap: 4px; margin: 6px 0 10px;
+    direction: rtl;
+  }
+  .live-dot { width: 6px; height: 6px; background: #4ade80; border-radius: 50%; }
+  .live-text { font-size: 8px; color: rgba(74,222,128,0.8); }
+
+  .btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 8px 10px;
+    margin-bottom: 5px; display: flex; align-items: center; gap: 7px;
+    direction: rtl; position: relative; overflow: hidden;
+  }
+  .btn::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; }
+  .btn.blue::before { background: #3b82f6; }
+  .btn.cyan::before { background: #22d3ee; }
+  .btn.yellow::before { background: #facc15; }
+  .btn.indigo::before { background: #818cf8; }
+  .btn.green::before { background: #34d399; }
+  .btn-icon {
+    width: 22px; height: 22px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center; font-size: 11px;
+    flex-shrink: 0;
+  }
+  .btn-icon.blue { background: linear-gradient(135deg,#1d4ed8,#1e40af); }
+  .btn-icon.cyan { background: linear-gradient(135deg,#0e7490,#0c4a6e); }
+  .btn-icon.yellow { background: linear-gradient(135deg,#b45309,#92400e); }
+  .btn-icon.indigo { background: linear-gradient(135deg,#1e40af,#1e3a8a); }
+  .btn-icon.green { background: linear-gradient(135deg,#047857,#065f46); }
+  .btn-text { flex: 1; }
+  .btn-title { font-size: 9px; font-weight: 700; color: #e8f0ff; }
+  .btn-sub { font-size: 7px; color: rgba(180,210,255,0.4); }
+
+  /* מסך תחנות */
+  .station-row {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 8px 10px; margin-bottom: 5px;
+    display: flex; align-items: center; direction: rtl; gap: 8px;
+  }
+  .st-info { flex: 1; }
+  .st-name { font-size: 9px; font-weight: 800; color: #e8f0ff; }
+  .st-code { font-size: 7px; color: rgba(180,210,255,0.5); margin-top: 1px; }
+  .st-dist { font-size: 7px; color: #60a5fa; margin-top: 1px; }
+  .st-star { font-size: 14px; color: rgba(255,255,255,0.3); }
+  .st-arrow { font-size: 14px; color: #60a5fa; }
+
+  /* מסך מפה */
+  .map-bg {
+    background: #1a2035;
+    border-radius: 10px; height: 180px;
+    position: relative; overflow: hidden;
+    margin-bottom: 0;
+  }
+  .map-grid-h, .map-grid-v {
+    position: absolute; background: rgba(96,165,250,0.07);
+  }
+  .map-grid-h { left: 0; right: 0; height: 1px; }
+  .map-grid-v { top: 0; bottom: 0; width: 1px; }
+  .map-road-h {
+    position: absolute; left: 0; right: 0; height: 4px;
+    background: rgba(96,165,250,0.12); border-radius: 2px;
+  }
+  .map-road-v {
+    position: absolute; top: 0; bottom: 0; width: 4px;
+    background: rgba(96,165,250,0.12); border-radius: 2px;
+  }
+  .map-pin { position: absolute; font-size: 14px; transform: translate(-50%,-50%); }
+  .map-user { position: absolute; width: 10px; height: 10px; background: #60a5fa; border-radius: 50%; border: 2px solid #fff; transform: translate(-50%,-50%); box-shadow: 0 0 8px #60a5fa; }
+  .map-popup {
+    position: absolute; bottom: 8px; left: 8px; right: 8px;
+    background: rgba(0,20,60,0.97); border: 1px solid #60a5fa;
+    border-radius: 10px; padding: 8px 10px;
+    display: flex; align-items: center; direction: rtl; gap: 6px;
+  }
+  .mp-name { font-size: 8px; font-weight: 800; color: #e8f0ff; }
+  .mp-code { font-size: 7px; color: rgba(180,210,255,0.7); }
+  .mp-arrow { font-size: 14px; color: #60a5fa; margin-right: auto; }
+
+  /* מסך פרטי תחנה */
+  .arrival-row {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 8px; padding: 7px 10px; margin-bottom: 4px;
+    display: flex; align-items: center; direction: rtl; gap: 8px;
+  }
+  .ar-line {
+    background: linear-gradient(135deg,#1d4ed8,#0ea5e9);
+    color: #fff; font-size: 9px; font-weight: 900;
+    width: 22px; height: 22px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .ar-dest { flex: 1; font-size: 8px; color: #e8f0ff; }
+  .ar-time { font-size: 11px; font-weight: 900; color: #4ade80; }
+  .ar-min { font-size: 7px; color: rgba(180,210,255,0.5); }
+  .ar-live { width: 5px; height: 5px; background: #4ade80; border-radius: 50%; }
+</style>
+</head>
+<body>
+
+<h1>App Store Preview — מידע תחנה</h1>
+<p class="subtitle">כך נראית האפליקציה בחנות</p>
+
+<!-- אייקונים -->
+<div class="icon-section">
+  <h2>אייקון האפליקציה</h2>
+  <div class="icons-row">
+    <div>
+      <div class="app-icon app-icon-xl">🚌</div>
+      <div class="icon-label">1024×1024</div>
+    </div>
+    <div>
+      <div class="app-icon app-icon-lg">🚌</div>
+      <div class="icon-label">180×180</div>
+    </div>
+    <div>
+      <div class="app-icon app-icon-md">🚌</div>
+      <div class="icon-label">120×120</div>
+    </div>
+    <div>
+      <div class="app-icon app-icon-sm">🚌</div>
+      <div class="icon-label">60×60</div>
+    </div>
+  </div>
+</div>
+
+<!-- מסכים -->
+<div class="screens-section">
+  <h2>צילומי מסך לחנות</h2>
+  <div class="screens-row">
+
+    <!-- מסך 1: בית -->
+    <div>
+      <div class="phone">
+        <div class="phone-notch"><div class="phone-notch-dot"></div></div>
+        <div class="phone-screen">
+          <div class="screen-header">
+            <div></div>
+            <div style="text-align:right">
+              <div class="screen-title">מידע תחנה</div>
+              <div class="screen-sub">זמני הגעת אוטובוסים · ישראל</div>
+              <div class="live-badge"><div class="live-dot"></div><div class="live-text">עדכון בזמן אמת</div></div>
+            </div>
+            <div class="screen-logo">🚌</div>
+          </div>
+          <div style="height:1px;background:rgba(96,165,250,0.15);margin-bottom:8px;"></div>
+          <div class="btn blue"><div class="btn-icon blue">📍</div><div class="btn-text"><div class="btn-title">חיפוש לפי מיקום</div><div class="btn-sub">תחנות עד 250 מטר</div></div></div>
+          <div class="btn cyan"><div class="btn-icon cyan">🕐</div><div class="btn-text"><div class="btn-title">חיפושים אחרונים</div><div class="btn-sub">היסטוריה שמורה</div></div></div>
+          <div class="btn yellow"><div class="btn-icon yellow">⭐</div><div class="btn-text"><div class="btn-title">מועדפים</div><div class="btn-sub">תחנות קבועות</div></div></div>
+          <div class="btn indigo"><div class="btn-icon indigo">🔢</div><div class="btn-text"><div class="btn-title">מספר תחנה</div><div class="btn-sub">הקלד מספר ישירות</div></div></div>
+          <div class="btn green"><div class="btn-icon green">🗺️</div><div class="btn-text"><div class="btn-title">מפה אינטראקטיבית</div><div class="btn-sub">הצג תחנות מסביב</div></div></div>
+        </div>
+        <div class="phone-tabbar">
+          <div class="phone-tabbar-item"><span>⚙️</span><label>הגדרות</label></div>
+          <div class="phone-tabbar-item"><span>🗺️</span><label>מפה</label></div>
+          <div class="phone-tabbar-item"><span>⭐</span><label>מועדפים</label></div>
+          <div class="phone-tabbar-item active"><span>🏠</span><label style="color:#60a5fa">בית</label></div>
+        </div>
+      </div>
+      <div class="phone-label">מסך ראשי</div>
+    </div>
+
+    <!-- מסך 2: תחנות קרובות -->
+    <div>
+      <div class="phone">
+        <div class="phone-notch"><div class="phone-notch-dot"></div></div>
+        <div class="phone-screen">
+          <div style="display:flex;align-items:center;justify-content:space-between;direction:rtl;margin-bottom:10px">
+            <div></div>
+            <div class="screen-title" style="font-size:13px">תחנות קרובות</div>
+            <div style="font-size:14px;color:rgba(180,210,255,0.4)">✕</div>
+          </div>
+          <div class="station-row"><div class="st-star">☆</div><div class="st-info"><div class="st-name">הרצל/רוטשילד</div><div class="st-code">תחנה 3412</div><div class="st-dist">45 מטר</div></div><div class="st-arrow">›</div></div>
+          <div class="station-row"><div class="st-star">⭐</div><div class="st-info"><div class="st-name">דיזנגוף/גורדון</div><div class="st-code">תחנה 5521</div><div class="st-dist">112 מטר</div></div><div class="st-arrow">›</div></div>
+          <div class="station-row"><div class="st-star">☆</div><div class="st-info"><div class="st-name">בן יהודה/ארלוזורוב</div><div class="st-code">תחנה 8834</div><div class="st-dist">198 מטר</div></div><div class="st-arrow">›</div></div>
+          <div class="station-row"><div class="st-star">☆</div><div class="st-info"><div class="st-name">יהודה הלוי/הרצל</div><div class="st-code">תחנה 2209</div><div class="st-dist">231 מטר</div></div><div class="st-arrow">›</div></div>
+        </div>
+        <div class="phone-tabbar">
+          <div class="phone-tabbar-item"><span>⚙️</span><label>הגדרות</label></div>
+          <div class="phone-tabbar-item"><span>🗺️</span><label>מפה</label></div>
+          <div class="phone-tabbar-item"><span>⭐</span><label>מועדפים</label></div>
+          <div class="phone-tabbar-item active"><span>🏠</span><label style="color:#60a5fa">בית</label></div>
+        </div>
+      </div>
+      <div class="phone-label">תחנות קרובות</div>
+    </div>
+
+    <!-- מסך 3: זמני הגעה -->
+    <div>
+      <div class="phone">
+        <div class="phone-notch"><div class="phone-notch-dot"></div></div>
+        <div class="phone-screen">
+          <div style="display:flex;align-items:center;direction:rtl;gap:8px;margin-bottom:8px">
+            <div class="screen-logo" style="width:28px;height:28px;border-radius:8px;font-size:14px;flex-shrink:0">✕</div>
+            <div style="flex:1;text-align:right"><div class="screen-title" style="font-size:12px">דיזנגוף/גורדון</div><div class="screen-sub">תחנה 5521</div></div>
+            <div style="font-size:16px">⭐</div>
+          </div>
+          <div class="live-badge"><div class="live-dot"></div><div class="live-text">עדכון בזמן אמת</div></div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:7px;padding:5px 8px;margin-bottom:8px;direction:rtl;font-size:8px;color:rgba(180,210,255,0.4)">סינון לפי מספר קו...</div>
+          <div class="arrival-row"><div class="ar-live"></div><div class="ar-line">5</div><div class="ar-dest">דרך בן גוריון</div><div class="ar-time">3</div><div class="ar-min">דק׳</div></div>
+          <div class="arrival-row"><div class="ar-live"></div><div class="ar-line">13</div><div class="ar-dest">בת ים — שוק</div><div class="ar-time">7</div><div class="ar-min">דק׳</div></div>
+          <div class="arrival-row"><div style="width:5px"></div><div class="ar-line" style="background:linear-gradient(135deg,#1e40af,#312e81)">189</div><div class="ar-dest">תל אביב מרכז</div><div class="ar-time">12</div><div class="ar-min">דק׳</div></div>
+          <div class="arrival-row"><div class="ar-live"></div><div class="ar-line">5</div><div class="ar-dest">דרך בן גוריון</div><div class="ar-time">18</div><div class="ar-min">דק׳</div></div>
+        </div>
+        <div class="phone-tabbar">
+          <div class="phone-tabbar-item"><span>⚙️</span><label>הגדרות</label></div>
+          <div class="phone-tabbar-item"><span>🗺️</span><label>מפה</label></div>
+          <div class="phone-tabbar-item"><span>⭐</span><label>מועדפים</label></div>
+          <div class="phone-tabbar-item active"><span>🏠</span><label style="color:#60a5fa">בית</label></div>
+        </div>
+      </div>
+      <div class="phone-label">זמני הגעה</div>
+    </div>
+
+    <!-- מסך 4: מפה -->
+    <div>
+      <div class="phone">
+        <div class="phone-notch"><div class="phone-notch-dot"></div></div>
+        <div class="phone-screen" style="padding:0">
+          <div class="map-bg">
+            <div class="map-grid-h" style="top:25%"></div>
+            <div class="map-grid-h" style="top:50%"></div>
+            <div class="map-grid-h" style="top:75%"></div>
+            <div class="map-grid-v" style="left:33%"></div>
+            <div class="map-grid-v" style="left:66%"></div>
+            <div class="map-road-h" style="top:40%"></div>
+            <div class="map-road-h" style="top:65%"></div>
+            <div class="map-road-v" style="left:45%"></div>
+            <div class="map-pin" style="top:42%;left:47%">🚌</div>
+            <div class="map-pin" style="top:28%;left:30%">🚌</div>
+            <div class="map-pin" style="top:60%;left:65%">🚌</div>
+            <div class="map-pin" style="top:35%;left:72%">🚌</div>
+            <div class="map-user" style="top:50%;left:48%"></div>
+            <div class="map-popup">
+              <div class="mp-arrow">›</div>
+              <div style="flex:1;text-align:right"><div class="mp-name">דיזנגוף/גורדון</div><div class="mp-code">תחנה 5521 · לחץ לזמני הגעה</div></div>
+              <div style="font-size:18px">🚌</div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-tabbar">
+          <div class="phone-tabbar-item"><span>⚙️</span><label>הגדרות</label></div>
+          <div class="phone-tabbar-item active"><span style="font-size:16px">🗺️</span><label style="color:#60a5fa">מפה</label></div>
+          <div class="phone-tabbar-item"><span>⭐</span><label>מועדפים</label></div>
+          <div class="phone-tabbar-item"><span>🏠</span><label>בית</label></div>
+        </div>
+      </div>
+      <div class="phone-label">מפה אינטראקטיבית</div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
