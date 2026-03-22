@@ -6,17 +6,20 @@ import csv
 import io
 import math
 import zipfile
+import threading
 import requests
+from typing import Optional
 
 GTFS_ZIP_URL = "https://gtfs.mot.gov.il/gtfsfiles/israel-public-transportation.zip"
 
 _stops: list[dict] = []
-_stop_by_id: dict[str, dict] = {}          # stop_id  -> stop
-_stop_by_code: dict[str, dict] = {}         # stop_code -> stop
-_route_stops: dict[str, list[dict]] = {}    # route_short_name -> [stop dicts ordered]
+_stop_by_id: dict[str, dict] = {}
+_stop_by_code: dict[str, dict] = {}
+_route_stops: dict[str, list[dict]] = {}
+_routes_ready = False   # True אחרי שהקווים נטענו
 
 
-# ── helpers ──────────────────────────────────────────────────────────────────
+# ── helpers ────────────────────────────────────────────────────────────────
 
 def _haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     R = 6_371_000
@@ -27,81 +30,110 @@ def _haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
 
-def _read_csv(zf: zipfile.ZipFile, filename: str) -> csv.DictReader:
-    content = zf.open(filename).read().decode("utf-8-sig")
-    return csv.DictReader(io.StringIO(content))
+def _parse_stop_times_fast(zf: zipfile.ZipFile, wanted_trips: set) -> dict:
+    """קורא stop_times.txt בצורה יעילה — ללא DictReader."""
+    trip_stops: dict[str, list[tuple[int, str]]] = {t: [] for t in wanted_trips}
+    with zf.open("stop_times.txt") as f:
+        header = f.readline().decode("utf-8-sig").strip().split(",")
+        tid_idx = header.index("trip_id")
+        sid_idx = header.index("stop_id")
+        seq_idx = header.index("stop_sequence")
+        for raw in f:
+            parts = raw.decode("utf-8", errors="ignore").strip().split(",")
+            if len(parts) <= max(tid_idx, sid_idx, seq_idx):
+                continue
+            tid = parts[tid_idx]
+            if tid not in wanted_trips:
+                continue
+            try:
+                trip_stops[tid].append((int(parts[seq_idx]), parts[sid_idx]))
+            except ValueError:
+                pass
+    return trip_stops
 
 
-# ── loader ───────────────────────────────────────────────────────────────────
+# ── loaders ────────────────────────────────────────────────────────────────
 
 def load_stops() -> None:
-    global _stops, _stop_by_id, _stop_by_code, _route_stops
+    """שלב 1: מוריד ZIP, טוען תחנות מיד — השרת מתחיל."""
+    global _stops, _stop_by_id, _stop_by_code
 
     print(f"מוריד {GTFS_ZIP_URL} ...")
     resp = requests.get(GTFS_ZIP_URL, timeout=120)
     resp.raise_for_status()
-    zip_bytes = resp.content
-    print("מנתח GTFS...")
 
-    with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
+    # שמור את ה-ZIP לשימוש הרקע
+    global _zip_bytes
+    _zip_bytes = resp.content
 
-        # 1. stops.txt
-        for row in _read_csv(zf, "stops.txt"):
-            if not row.get("stop_lat") or not row.get("stop_lon"):
-                continue
-            s = {
-                "id":   row["stop_id"],
-                "code": row["stop_code"],
-                "name": row["stop_name"],
-                "lat":  float(row["stop_lat"]),
-                "lon":  float(row["stop_lon"]),
-            }
-            _stops.append(s)
-            _stop_by_id[s["id"]] = s
-            _stop_by_code[s["code"]] = s
-        print(f"נטענו {len(_stops)} תחנות")
+    with zipfile.ZipFile(io.BytesIO(_zip_bytes)) as zf:
+        content = zf.open("stops.txt").read().decode("utf-8-sig")
+    for row in csv.DictReader(io.StringIO(content)):
+        if not row.get("stop_lat") or not row.get("stop_lon"):
+            continue
+        s = {
+            "id":   row["stop_id"],
+            "code": row["stop_code"],
+            "name": row["stop_name"],
+            "lat":  float(row["stop_lat"]),
+            "lon":  float(row["stop_lon"]),
+        }
+        _stops.append(s)
+        _stop_by_id[s["id"]] = s
+        _stop_by_code[s["code"]] = s
+    print(f"נטענו {len(_stops)} תחנות")
 
-        # 2. routes.txt — route_id -> short_name
-        route_id_to_name: dict[str, str] = {}
-        for row in _read_csv(zf, "routes.txt"):
-            route_id_to_name[row["route_id"]] = row.get("route_short_name", "")
+    # טעינת קווים ברקע — לא חוסמת את השרת
+    threading.Thread(target=_load_routes_background, daemon=True).start()
 
-        # 3. trips.txt — בוחר trip אחד (ראשון) לכל route_short_name
-        name_to_trip: dict[str, str] = {}   # short_name -> trip_id
-        for row in _read_csv(zf, "trips.txt"):
-            name = route_id_to_name.get(row["route_id"], "")
-            if name and name not in name_to_trip:
-                name_to_trip[name] = row["trip_id"]
 
-        wanted_trips = set(name_to_trip.values())
+_zip_bytes: bytes = b""
 
-        # 4. stop_times.txt — רק trips שנבחרו
-        trip_stops: dict[str, list[tuple[int, str]]] = {t: [] for t in wanted_trips}
-        for row in _read_csv(zf, "stop_times.txt"):
-            tid = row["trip_id"]
-            if tid not in wanted_trips:
-                continue
-            try:
-                seq = int(row["stop_sequence"])
-            except ValueError:
-                continue
-            trip_stops[tid].append((seq, row["stop_id"]))
 
-        # 5. בנה _route_stops
+def _load_routes_background() -> None:
+    """שלב 2 (ברקע): מנתח routes/trips/stop_times ובונה אינדקס קווים."""
+    global _route_stops, _routes_ready
+    try:
+        print("טוען קווים ברקע...")
+        with zipfile.ZipFile(io.BytesIO(_zip_bytes)) as zf:
+
+            # routes.txt
+            route_id_to_name: dict[str, str] = {}
+            content = zf.open("routes.txt").read().decode("utf-8-sig")
+            for row in csv.DictReader(io.StringIO(content)):
+                route_id_to_name[row["route_id"]] = row.get("route_short_name", "")
+
+            # trips.txt — trip אחד לכל קו
+            name_to_trip: dict[str, str] = {}
+            content = zf.open("trips.txt").read().decode("utf-8-sig")
+            for row in csv.DictReader(io.StringIO(content)):
+                name = route_id_to_name.get(row["route_id"], "")
+                if name and name not in name_to_trip:
+                    name_to_trip[name] = row["trip_id"]
+
+            wanted_trips = set(name_to_trip.values())
+
+            # stop_times.txt — קריאה מהירה
+            trip_stops = _parse_stop_times_fast(zf, wanted_trips)
+
+        # בנה אינדקס קווים
         for name, tid in name_to_trip.items():
             ordered = sorted(trip_stops.get(tid, []), key=lambda x: x[0])
-            stops_list = []
-            for seq, sid in ordered:
-                stop = _stop_by_id.get(sid)
-                if stop:
-                    stops_list.append({**stop, "sequence": seq})
+            stops_list = [
+                {**_stop_by_id[sid], "sequence": seq}
+                for seq, sid in ordered
+                if sid in _stop_by_id
+            ]
             if stops_list:
                 _route_stops[name] = stops_list
 
-    print(f"נטענו {len(_route_stops)} קווים")
+        _routes_ready = True
+        print(f"נטענו {len(_route_stops)} קווים")
+    except Exception as e:
+        print(f"שגיאה בטעינת קווים: {e}")
 
 
-# ── queries ───────────────────────────────────────────────────────────────────
+# ── queries ────────────────────────────────────────────────────────────────
 
 def get_nearby(lat: float, lon: float, radius: int = 500) -> list[dict]:
     results = []
@@ -118,21 +150,23 @@ def get_stop_name(stop_code: str) -> str:
     return s["name"] if s else ""
 
 
-def get_stop_by_code(stop_code: str) -> dict | None:
+def get_stop_by_code(stop_code: str) -> Optional[dict]:
     return _stop_by_code.get(stop_code) or _stop_by_id.get(stop_code)
 
 
 def get_stops_in_bounds(min_lat: float, max_lat: float, min_lon: float, max_lon: float, limit: int = 300) -> list[dict]:
-    results = [
+    return [
         s for s in _stops
         if min_lat <= s["lat"] <= max_lat and min_lon <= s["lon"] <= max_lon
-    ]
-    return results[:limit]
+    ][:limit]
 
 
 def get_route_stops(line_number: str) -> list[dict]:
-    """מחזיר רשימת תחנות לקו לפי מספרו, לפי סדר."""
     return _route_stops.get(line_number, [])
+
+
+def routes_ready() -> bool:
+    return _routes_ready
 
 
 def stops_count() -> int:
