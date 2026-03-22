@@ -148,9 +148,9 @@ const styles = StyleSheet.create({
     marginBottom: 2, borderRadius: radius.sm,
   },
   stopContentCurrent: { backgroundColor: 'rgba(96,165,250,0.08)' },
-  stopName:        { fontSize: 14, fontWeight: '700', color: colors.textSub, textAlign: 'right' },
-  stopNameCurrent: { color: colors.text, fontSize: 15 },
-  stopCode:        { fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 2, textAlign: 'right' },
+  stopName:        { fontSize: 14, fontWeight: '700', color: 'rgba(255,255,255,0.75)', textAlign: 'right' },
+  stopNameCurrent: { color: '#ffffff', fontSize: 15 },
+  stopCode:        { fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 2, textAlign: 'right' },
   hereBadge: {
     backgroundColor: colors.accent, borderRadius: radius.sm,
     paddingHorizontal: 8, paddingVertical: 3, marginTop: 12, marginLeft: spacing.sm,

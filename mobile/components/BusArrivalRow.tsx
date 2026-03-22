@@ -34,7 +34,7 @@ export function BusArrivalRow({ arrival, currentStationCode }: Props) {
         onPress={() => router.push({ pathname: '/route/[lineNumber]', params: { lineNumber, stationCode: currentStationCode ?? '' } })}
         activeOpacity={0.7}
       >
-        <Text style={styles.routeBtnIcon}>⬡</Text>
+        <Text style={styles.routeBtnIcon}>🚏</Text>
       </TouchableOpacity>
       <Text style={[styles.dest, { fontSize: font(13), color: c.text }]} numberOfLines={1}>{destination}</Text>
       {isRealTime && <View style={styles.liveDot} />}

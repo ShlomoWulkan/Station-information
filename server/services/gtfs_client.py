@@ -176,13 +176,39 @@ def get_stops_in_bounds(min_lat, max_lat, min_lon, max_lon, limit=300) -> list[d
     ][:limit]
 
 
-def get_routes_for_station(stop_code: str) -> list[str]:
-    """קווים לתחנה מ-GTFS — ללא API key."""
+def get_routes_for_station(stop_code: str) -> list[dict]:
+    """קווים לתחנה מ-GTFS — כולל יעד (תחנה אחרונה)."""
     stop = _stop_by_code.get(stop_code) or _stop_by_id.get(stop_code)
     if not stop:
         return []
-    names = _stop_to_routes.get(stop["id"], set())
-    return sorted(names, key=lambda n: (len(n), n))
+    stop_id   = stop["id"]
+    names     = _stop_to_routes.get(stop_id, set())
+    stop_trips = _stop_to_trips.get(stop_id, set())
+
+    result = []
+    for name in sorted(names, key=lambda n: (len(n), n)):
+        # מצא trip לקו זה שעובר בתחנה
+        route_ids = _name_to_route_ids.get(name, [])
+        chosen_tid = None
+        for rid in route_ids:
+            tid = _route_id_to_trip.get(rid)
+            if tid and tid in stop_trips:
+                chosen_tid = tid
+                break
+        if not chosen_tid and route_ids:
+            chosen_tid = _route_id_to_trip.get(route_ids[0])
+
+        destination = ""
+        if chosen_tid:
+            stops_list = _trip_to_stops.get(chosen_tid, [])
+            if stops_list:
+                last_sid = stops_list[-1][1]
+                last_stop = _stop_by_id.get(last_sid)
+                if last_stop:
+                    destination = last_stop["name"]
+
+        result.append({"lineNumber": name, "destination": destination})
+    return result
 
 
 def get_route_stops(station_code: str, line_number: str) -> list[dict]:

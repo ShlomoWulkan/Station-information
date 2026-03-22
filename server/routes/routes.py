@@ -14,5 +14,5 @@ def get_routes(station_code: str):
     if not routes_ready():
         return jsonify({"error": "קווים עדיין נטענים, נסה שוב בעוד כמה דקות"}), 503
 
-    names = get_routes_for_station(station_code)
-    return jsonify([{"lineNumber": n} for n in names])
+    routes = get_routes_for_station(station_code)
+    return jsonify(routes)
