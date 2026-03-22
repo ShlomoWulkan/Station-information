@@ -10,3 +10,4 @@ PORT             = int(os.getenv("PORT", 5000))
 HOST             = os.getenv("HOST", "0.0.0.0")
 CACHE_TTL        = 10   # שניות — זמני הגעה
 CACHE_TTL_ALERTS = 300  # שניות — התראות שירות
+CACHE_TTL_ROUTES = 300  # שניות — רשימת קווים (משתנה לאט)

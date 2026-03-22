@@ -32,3 +32,20 @@ export async function fetchArrivals(stationCode: string): Promise<BusArrival[]> 
   if (data.error) throw new Error(data.error);
   return data;
 }
+
+export async function fetchRouteStops(lineNumber: string): Promise<{ id: string; code: string; name: string; lat: number; lon: number; sequence: number }[]> {
+  const res = await fetch(`${BASE_URL}/route-stops/${lineNumber}`);
+  if (res.status === 404) throw new Error(`לא נמצאו תחנות לקו ${lineNumber}`);
+  if (!res.ok) throw new Error(`שגיאת שרת: ${res.status}`);
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data;
+}
+
+export async function fetchRoutes(stationCode: string): Promise<{ lineNumber: string; destination: string }[]> {
+  const res = await fetch(`${BASE_URL}/routes/${stationCode}`);
+  if (!res.ok) throw new Error(`שגיאת שרת: ${res.status}`);
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data;
+}
