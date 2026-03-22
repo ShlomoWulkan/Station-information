@@ -148,7 +148,7 @@ export default function StationDetailScreen() {
               <TouchableOpacity
                 key={i}
                 style={styles.routeRow}
-                onPress={() => router.push({ pathname: '/route/[lineNumber]', params: { lineNumber: r.lineNumber, currentCode: code } })}
+                onPress={() => router.push({ pathname: '/route/[lineNumber]', params: { lineNumber: r.lineNumber, stationCode: code } })}
                 activeOpacity={0.7}
               >
                 <View style={styles.routeBadge}>

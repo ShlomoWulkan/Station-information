@@ -7,25 +7,25 @@ import { colors, spacing, radius } from '@/constants/theme';
 
 interface RouteStop {
   id: string; code: string; name: string;
-  lat: number; lon: number; sequence: number;
+  lat: number; lon: number; sequence: number; isCurrent?: boolean;
 }
 
 export default function RouteStopsScreen() {
-  const { lineNumber, currentCode } = useLocalSearchParams<{ lineNumber: string; currentCode: string }>();
+  const { lineNumber, stationCode } = useLocalSearchParams<{ lineNumber: string; stationCode: string }>();
   const [stops, setStops]     = useState<RouteStop[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState<string | null>(null);
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
-    fetchRouteStops(lineNumber)
+    fetchRouteStops(stationCode, lineNumber)
       .then(setStops)
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
-  }, [lineNumber]);
+  }, [lineNumber, stationCode]);
 
   const renderStop = ({ item, index }: { item: RouteStop; index: number }) => {
-    const isCurrent = item.code === currentCode || item.id === currentCode;
+    const isCurrent = item.isCurrent || item.code === stationCode || item.id === stationCode;
     const isLast    = index === stops.length - 1;
 
     return (

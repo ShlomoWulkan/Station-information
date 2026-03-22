@@ -31,7 +31,7 @@ export function BusArrivalRow({ arrival, currentStationCode }: Props) {
       </View>
       <TouchableOpacity
         style={styles.routeBtn}
-        onPress={() => router.push({ pathname: '/route/[lineNumber]', params: { lineNumber, currentCode: currentStationCode ?? '' } })}
+        onPress={() => router.push({ pathname: '/route/[lineNumber]', params: { lineNumber, stationCode: currentStationCode ?? '' } })}
         activeOpacity={0.7}
       >
         <Text style={styles.routeBtnIcon}>⬡</Text>
