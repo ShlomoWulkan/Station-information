@@ -20,13 +20,28 @@
       "adaptiveIcon": {
         "backgroundColor": "#000d28"
       },
-      "package": "com.midaatachana.app"
+      "package": "com.midaatachana.app",
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyC7jM2kIHMCLMnI-UrEx2LUJI49q34sfdY"
+        }
+      }
     },
     "ios": {
       "bundleIdentifier": "com.midaatachana.app"
     },
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "d1a271b1-1613-4397-b866-f36d4b506a49"
+      }
     }
   }
 }
