@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-SIRI_BASE_URL    = os.getenv("SIRI_BASE_URL", "https://api.mot.gov.il/v1/siri")
+SIRI_BASE_URL    = os.getenv("SIRI_BASE_URL", "https://moran.mot.gov.il/Channels/HTTPChannel/SmQuery/2.8")
 ALERTS_URL       = os.getenv("ALERTS_URL", "https://gtfs.mot.gov.il/ServiceAlerts/gtfs_rt_alerts.pb")
 API_KEY          = os.getenv("API_KEY", "")
 PORT             = int(os.getenv("PORT", 5000))

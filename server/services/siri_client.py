@@ -8,7 +8,7 @@ from config import SIRI_BASE_URL, API_KEY
 
 def fetch_arrivals(station_code: str) -> str:
     """מחזיר XML של זמני הגעה לתחנה."""
-    url = f"{SIRI_BASE_URL}/2.8/xml"
+    url = f"{SIRI_BASE_URL}/xml"
     response = requests.get(
         url,
         params={"Key": API_KEY, "MonitoringRef": station_code},
