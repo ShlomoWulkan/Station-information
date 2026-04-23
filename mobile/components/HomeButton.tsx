@@ -1,6 +1,7 @@
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, radius, spacing } from '@/constants/theme';
+import { useA11y } from '@/hooks/useA11y';
 
 interface Props {
   icon: string;
@@ -13,22 +14,32 @@ interface Props {
 }
 
 export function HomeButton({ icon, title, subtitle, neonColor, iconColors, badgeCount, onPress }: Props) {
+  const { font, c } = useA11y();
+  const iconSize = font(38);
+
   return (
-    <TouchableOpacity style={styles.btn} onPress={onPress} activeOpacity={0.7}>
+    <TouchableOpacity
+      style={[styles.btn, { borderColor: c.cardBorder, backgroundColor: c.card, paddingVertical: font(10) }]}
+      onPress={onPress}
+      activeOpacity={0.7}
+      accessibilityRole="button"
+      accessibilityLabel={title}
+      accessibilityHint={subtitle}
+    >
       <View style={[styles.neon, { backgroundColor: neonColor }]} />
-      <LinearGradient colors={iconColors} style={styles.iconWrap} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
-        <Text style={styles.iconText}>{icon}</Text>
+      <LinearGradient colors={iconColors} style={[styles.iconWrap, { width: iconSize, height: iconSize }]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+        <Text style={[styles.iconText, { fontSize: font(18) }]}>{icon}</Text>
       </LinearGradient>
       <View style={styles.textWrap}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle}>{subtitle}</Text>
+        <Text style={[styles.title, { fontSize: font(13), color: c.text }]}>{title}</Text>
+        <Text style={[styles.subtitle, { fontSize: font(10), color: c.textSub }]}>{subtitle}</Text>
       </View>
       {badgeCount !== undefined ? (
         <View style={styles.badge}>
-          <Text style={styles.badgeText}>{badgeCount}</Text>
+          <Text style={[styles.badgeText, { fontSize: font(10) }]}>{badgeCount}</Text>
         </View>
       ) : (
-        <Text style={styles.arrow}>›</Text>
+        <Text style={[styles.arrow, { fontSize: font(18) }]}>›</Text>
       )}
     </TouchableOpacity>
   );

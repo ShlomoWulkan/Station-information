@@ -9,6 +9,7 @@ interface RecentStore {
   recent: Station[];
   load: () => Promise<void>;
   push: (s: Station) => Promise<void>;
+  remove: (id: string) => Promise<void>;
   clear: () => Promise<void>;
 }
 
@@ -23,7 +24,14 @@ export const useRecent = create<RecentStore>((set, get) => ({
   },
 
   push: async (station) => {
-    const next = [station, ...get().recent.filter(r => r.id !== station.id)].slice(0, MAX);
+    const normalized = { ...station, id: String(station.id), code: String(station.code) };
+    const next = [normalized, ...get().recent.filter(r => String(r.id) !== normalized.id)].slice(0, MAX);
+    set({ recent: next });
+    await AsyncStorage.setItem(KEY, JSON.stringify(next));
+  },
+
+  remove: async (id) => {
+    const next = get().recent.filter(r => String(r.id) !== String(id));
     set({ recent: next });
     await AsyncStorage.setItem(KEY, JSON.stringify(next));
   },

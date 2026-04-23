@@ -1,28 +1,31 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { StationCard } from '@/components/StationCard';
+import { StationRow } from '@/components/StationRow';
 import { colors, spacing, radius } from '@/constants/theme';
-import { searchByCode, getArrivals } from '@/services/mockData';
-import { useRecent } from '@/store/recentStore';
+import { fetchStation } from '@/services/api';
 import type { Station } from '@/types';
 
 export default function SearchNumberScreen() {
   const [code, setCode] = useState('');
   const [station, setStation] = useState<Station | null>(null);
-  const [notFound, setNotFound] = useState(false);
-  const { push } = useRecent();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSearch = () => {
-    const result = searchByCode(code.trim());
-    if (result) {
-      setStation(result);
-      setNotFound(false);
-      push(result);
-    } else {
-      setStation(null);
-      setNotFound(true);
+  const handleSearch = async () => {
+    const trimmed = code.trim();
+    if (!trimmed) return;
+    setLoading(true);
+    setError(null);
+    setStation(null);
+    try {
+      const s = await fetchStation(trimmed);
+      setStation(s);
+    } catch {
+      setError(`תחנה ${trimmed} לא נמצאה`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -53,12 +56,9 @@ export default function SearchNumberScreen() {
         </View>
 
         <ScrollView style={styles.results} showsVerticalScrollIndicator={false}>
-          {notFound && (
-            <Text style={styles.notFound}>תחנה {code} לא נמצאה</Text>
-          )}
-          {station && (
-            <StationCard station={station} arrivals={getArrivals(station.code)} />
-          )}
+          {loading && <ActivityIndicator color={colors.accent} style={{ marginTop: spacing.xl }} />}
+          {error && <Text style={styles.notFound}>{error}</Text>}
+          {station && <StationRow station={station} />}
         </ScrollView>
       </SafeAreaView>
     </View>

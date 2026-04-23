@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>סקיצות לוגו — מידע תחנה</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #00050f; font-family: 'Segoe UI', Arial, sans-serif; color: #e8f0ff; padding: 40px 20px; }
+  h1 { text-align: center; font-size: 28px; margin-bottom: 8px; color: #fff; }
+  .subtitle { text-align: center; color: rgba(180,210,255,0.5); margin-bottom: 48px; font-size: 14px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 48px; max-width: 1100px; margin: 0 auto; }
+
+  .logo-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(96,165,250,0.15);
+    border-radius: 20px;
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+  .logo-card h2 { font-size: 14px; color: rgba(180,210,255,0.55); letter-spacing: 1px; text-transform: uppercase; }
+
+  .preview-row { display: flex; align-items: center; gap: 32px; }
+
+  /* ── לוגו 1 ── אייקון עגול + שם בצד */
+  .logo1-icon {
+    width: 80px; height: 80px; border-radius: 22px;
+    background: linear-gradient(135deg, #1d4ed8, #0ea5e9);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px;
+    box-shadow: 0 0 24px rgba(14,165,233,0.5);
+  }
+  .logo1-text .name { font-size: 26px; font-weight: 900; color: #fff; direction: rtl; }
+  .logo1-text .sub { font-size: 11px; color: rgba(96,165,250,0.7); margin-top: 4px; letter-spacing: 2px; direction: rtl; }
+
+  .logo1-small {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: linear-gradient(135deg, #1d4ed8, #0ea5e9);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 0 12px rgba(14,165,233,0.4);
+  }
+  .logo1-header { display: flex; align-items: center; gap: 10px; direction: rtl; }
+  .logo1-header span { font-size: 18px; font-weight: 900; color: #fff; }
+
+  /* ── לוגו 2 ── מסלול + אוטובוס גיאומטרי */
+  .logo2-icon {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: #00050f;
+    border: 2px solid rgba(96,165,250,0.4);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    box-shadow: 0 0 0 1px rgba(96,165,250,0.15), 0 0 30px rgba(96,165,250,0.2);
+  }
+  .logo2-ring {
+    position: absolute; width: 64px; height: 64px; border-radius: 50%;
+    border: 1.5px dashed rgba(96,165,250,0.3);
+  }
+  .logo2-bus { font-size: 32px; position: relative; z-index: 1; }
+  .logo2-text .name { font-size: 26px; font-weight: 900; direction: rtl; }
+  .logo2-text .name span { color: #60a5fa; }
+  .logo2-text .sub { font-size: 11px; color: rgba(180,210,255,0.45); margin-top: 4px; direction: rtl; }
+
+  .logo2-small {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: #00050f; border: 1.5px solid rgba(96,165,250,0.5);
+    display: flex; align-items: center; justify-content: center; font-size: 20px;
+  }
+  .logo2-header { display: flex; align-items: center; gap: 10px; direction: rtl; }
+  .logo2-header .hn { font-size: 18px; font-weight: 900; color: #fff; }
+  .logo2-header .hb { color: #60a5fa; }
+
+  /* ── לוגו 3 ── תחנה מינימליסטית */
+  .logo3-icon {
+    width: 80px; height: 80px; border-radius: 16px;
+    background: linear-gradient(145deg, #0f172a, #1e3a8a);
+    border: 1px solid rgba(96,165,250,0.3);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    box-shadow: 0 0 20px rgba(59,130,246,0.3);
+  }
+  .logo3-pole { width: 4px; height: 32px; background: linear-gradient(to bottom, #60a5fa, #3b82f6); border-radius: 2px; }
+  .logo3-sign {
+    background: linear-gradient(90deg, #3b82f6, #0ea5e9);
+    color: #fff; font-size: 9px; font-weight: 900;
+    padding: 3px 7px; border-radius: 4px; letter-spacing: 0.5px;
+    margin-top: -30px; margin-right: -28px;
+  }
+  .logo3-base { width: 30px; height: 3px; background: rgba(96,165,250,0.4); border-radius: 2px; }
+
+  .logo3-text .name { font-size: 26px; font-weight: 900; color: #fff; direction: rtl; }
+  .logo3-text .name em { font-style: normal; color: #60a5fa; }
+  .logo3-text .sub { font-size: 11px; color: rgba(180,210,255,0.45); margin-top: 4px; direction: rtl; }
+
+  .logo3-small {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(145deg, #0f172a, #1e3a8a);
+    border: 1px solid rgba(96,165,250,0.35);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+  }
+  .logo3-small .sp { width: 2px; height: 16px; background: #60a5fa; border-radius: 1px; }
+  .logo3-small .ss { background: #3b82f6; color: #fff; font-size: 6px; font-weight: 900; padding: 2px 4px; border-radius: 2px; margin-top: -14px; margin-right: -14px; }
+  .logo3-small .sb { width: 16px; height: 2px; background: rgba(96,165,250,0.4); border-radius: 1px; }
+
+  .logo3-header { display: flex; align-items: center; gap: 10px; direction: rtl; }
+  .logo3-header span { font-size: 18px; font-weight: 900; color: #fff; }
+
+  /* ── לוגו 4 ── פין מיקום + אוטובוס */
+  .logo4-icon {
+    width: 80px; height: 80px; border-radius: 22px;
+    background: linear-gradient(135deg, #0c4a6e, #164e63);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    box-shadow: 0 0 24px rgba(6,182,212,0.35);
+  }
+  .logo4-pin { font-size: 38px; filter: drop-shadow(0 0 8px rgba(6,182,212,0.8)); }
+
+  .logo4-text { direction: rtl; }
+  .logo4-text .name { font-size: 26px; font-weight: 900; color: #fff; }
+  .logo4-text .accent { color: #22d3ee; }
+  .logo4-text .sub { font-size: 11px; color: rgba(180,210,255,0.45); margin-top: 4px; letter-spacing: 1px; }
+
+  .logo4-small {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: linear-gradient(135deg, #0c4a6e, #164e63);
+    display: flex; align-items: center; justify-content: center; font-size: 22px;
+  }
+  .logo4-header { display: flex; align-items: center; gap: 10px; direction: rtl; }
+  .logo4-header .hn { font-size: 18px; font-weight: 900; color: #fff; }
+  .logo4-header .ha { color: #22d3ee; }
+
+  /* ── לוגו 5 ── טיפוגרפי בלבד */
+  .logo5-icon {
+    width: 80px; height: 80px; border-radius: 20px;
+    background: linear-gradient(135deg, #1e40af, #1d4ed8);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: 0 0 28px rgba(30,64,175,0.6), 0 0 0 1px rgba(96,165,250,0.3);
+  }
+  .logo5-mh { font-size: 22px; font-weight: 900; color: #fff; line-height: 1; }
+  .logo5-mt { font-size: 10px; color: rgba(147,197,253,0.9); letter-spacing: 1.5px; margin-top: 3px; }
+
+  .logo5-text .name { font-size: 26px; font-weight: 900; color: #fff; direction: rtl; }
+  .logo5-text .sub { font-size: 11px; color: rgba(180,210,255,0.45); margin-top: 4px; direction: rtl; }
+
+  .logo5-small {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: linear-gradient(135deg, #1e40af, #1d4ed8);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: 0 0 12px rgba(30,64,175,0.5);
+  }
+  .logo5-small .sm { font-size: 12px; font-weight: 900; color: #fff; line-height: 1; }
+  .logo5-small .st { font-size: 6px; color: rgba(147,197,253,0.9); letter-spacing: 1px; margin-top: 2px; }
+
+  .logo5-header { display: flex; align-items: center; gap: 10px; direction: rtl; }
+  .logo5-header span { font-size: 18px; font-weight: 900; color: #fff; }
+
+  /* header mockup */
+  .header-preview {
+    background: rgba(0,20,60,0.8);
+    border: 1px solid rgba(96,165,250,0.12);
+    border-radius: 12px;
+    padding: 12px 16px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    direction: rtl;
+  }
+  .header-preview label { font-size: 11px; color: rgba(180,210,255,0.4); margin-bottom: 8px; display: block; }
+
+  .divider-h { width: 100%; height: 1px; background: rgba(96,165,250,0.1); }
+</style>
+</head>
+<body>
+
+<h1>סקיצות לוגו — מידע תחנה</h1>
+<p class="subtitle">5 אפשרויות עיצוב · בחר את המועדף עליך</p>
+
+<div class="grid">
+
+  <!-- לוגו 1 -->
+  <div class="logo-card">
+    <h2>אפשרות 1 — כפתור מעוגל + שם</h2>
+    <div class="preview-row">
+      <div class="logo1-icon">🚌</div>
+      <div class="logo1-text">
+        <div class="name">מידע תחנה</div>
+        <div class="sub">STATION INFO · IL</div>
+      </div>
+    </div>
+    <div class="divider-h"></div>
+    <label style="font-size:11px;color:rgba(180,210,255,0.4);align-self:flex-end">כותרת באפליקציה:</label>
+    <div class="header-preview">
+      <div class="logo1-header">
+        <span>מידע תחנה</span>
+        <div class="logo1-small">🚌</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- לוגו 2 -->
+  <div class="logo-card">
+    <h2>אפשרות 2 — עיגול + הדגשת מילה</h2>
+    <div class="preview-row">
+      <div class="logo2-icon">
+        <div class="logo2-ring"></div>
+        <div class="logo2-bus">🚏</div>
+      </div>
+      <div class="logo2-text">
+        <div class="name"><span>מידע</span> תחנה</div>
+        <div class="sub">זמני הגעה בזמן אמת</div>
+      </div>
+    </div>
+    <div class="divider-h"></div>
+    <label style="font-size:11px;color:rgba(180,210,255,0.4);align-self:flex-end">כותרת באפליקציה:</label>
+    <div class="header-preview">
+      <div class="logo2-header">
+        <div class="hn"><span class="hb">מידע</span> תחנה</div>
+        <div class="logo2-small">🚏</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- לוגו 3 -->
+  <div class="logo-card">
+    <h2>אפשרות 3 — תחנת אוטובוס ממשית</h2>
+    <div class="preview-row">
+      <div class="logo3-icon">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+          <div class="logo3-sign">BUS</div>
+          <div class="logo3-pole"></div>
+          <div class="logo3-base"></div>
+        </div>
+      </div>
+      <div class="logo3-text">
+        <div class="name"><em>מידע</em> תחנה</div>
+        <div class="sub">Bus Stop Information</div>
+      </div>
+    </div>
+    <div class="divider-h"></div>
+    <label style="font-size:11px;color:rgba(180,210,255,0.4);align-self:flex-end">כותרת באפליקציה:</label>
+    <div class="header-preview">
+      <div class="logo3-header">
+        <span>מידע תחנה</span>
+        <div class="logo3-small">
+          <div class="ss">BUS</div>
+          <div class="sp"></div>
+          <div class="sb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- לוגו 4 -->
+  <div class="logo-card">
+    <h2>אפשרות 4 — פין מיקום GPS</h2>
+    <div class="preview-row">
+      <div class="logo4-icon">
+        <div class="logo4-pin">📍</div>
+      </div>
+      <div class="logo4-text">
+        <div class="name"><span class="accent">מידע</span> תחנה</div>
+        <div class="sub">REAL · TIME · TRANSIT</div>
+      </div>
+    </div>
+    <div class="divider-h"></div>
+    <label style="font-size:11px;color:rgba(180,210,255,0.4);align-self:flex-end">כותרת באפליקציה:</label>
+    <div class="header-preview">
+      <div class="logo4-header">
+        <div class="hn"><span class="ha">מידע</span> תחנה</div>
+        <div class="logo4-small">📍</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- לוגו 5 -->
+  <div class="logo-card">
+    <h2>אפשרות 5 — טיפוגרפי / ראשי תיבות</h2>
+    <div class="preview-row">
+      <div class="logo5-icon">
+        <div class="logo5-mh">מ״ת</div>
+        <div class="logo5-mt">STATION</div>
+      </div>
+      <div class="logo5-text">
+        <div class="name">מידע תחנה</div>
+        <div class="sub">מידע תחבורה ציבורית · ישראל</div>
+      </div>
+    </div>
+    <div class="divider-h"></div>
+    <label style="font-size:11px;color:rgba(180,210,255,0.4);align-self:flex-end">כותרת באפליקציה:</label>
+    <div class="header-preview">
+      <div class="logo5-header">
+        <span>מידע תחנה</span>
+        <div class="logo5-small">
+          <div class="sm">מ״ת</div>
+          <div class="st">INFO</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

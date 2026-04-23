@@ -1,23 +1,27 @@
 import { useEffect, useRef } from 'react';
 import { View, Text, Animated, StyleSheet } from 'react-native';
 import { colors } from '@/constants/theme';
+import { useA11y } from '@/hooks/useA11y';
 
 export function LiveBadge() {
+  const { reduceMotion, font } = useA11y();
   const opacity = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
+    if (reduceMotion) { opacity.setValue(1); return; }
     Animated.loop(
       Animated.sequence([
         Animated.timing(opacity, { toValue: 0.3, duration: 750, useNativeDriver: true }),
         Animated.timing(opacity, { toValue: 1, duration: 750, useNativeDriver: true }),
       ])
     ).start();
-  }, []);
+    return () => opacity.stopAnimation();
+  }, [reduceMotion]);
 
   return (
     <View style={styles.badge}>
       <Animated.View style={[styles.dot, { opacity }]} />
-      <Text style={styles.text}>עדכון בזמן אמת</Text>
+      <Text style={[styles.text, { fontSize: font(10) }]}>עדכון בזמן אמת</Text>
     </View>
   );
 }
@@ -47,4 +51,5 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: 'rgba(180,210,255,0.8)',
   },
+  // font size applied inline via useA11y
 });

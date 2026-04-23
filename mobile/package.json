@@ -4,7 +4,7 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
-    "tunnel": "expo start --tunnel",
+    "tunnel": "set EXPO_USE_DEV_SERVER=1 && expo start --tunnel",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web"
@@ -22,6 +22,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
+    "react-native-maps": "1.20.1",
     "react-native-safe-area-context": "5.6.2",
     "react-native-screens": "~4.16.0",
     "react-native-web": "^0.21.2",
@@ -29,7 +30,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
-    "@expo/ngrok": "^4.1.3",
+    "@expo/ngrok": "^4.0.0",
     "@types/react": "~19.1.17",
     "typescript": "^5.3.0"
   },

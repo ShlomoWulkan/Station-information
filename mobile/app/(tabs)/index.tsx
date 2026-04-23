@@ -6,23 +6,27 @@ import { LiveBadge } from '@/components/LiveBadge';
 import { colors, spacing, neonColors, iconGradients } from '@/constants/theme';
 import { useFavorites } from '@/store/favoritesStore';
 import { useRecent } from '@/store/recentStore';
+import { useA11y } from '@/hooks/useA11y';
 
 export default function HomeScreen() {
   const favCount = useFavorites(s => s.favorites.length);
   const recentCount = useRecent(s => s.recent.length);
+  const { font, c } = useA11y();
 
   return (
     <View style={styles.bg}>
       <SafeAreaView style={styles.safe}>
         <View style={styles.header}>
-          <View>
-            <Text style={styles.title}>מידע תחנה</Text>
-            <Text style={styles.tagline}>זמני הגעת אוטובוסים · ישראל</Text>
+          <View style={styles.busIconWrap}>
+            <Text style={styles.busIcon}>🚌</Text>
           </View>
-          <Text style={styles.busIcon}>🚌</Text>
+          <View>
+            <Text style={[styles.title, { fontSize: font(22), color: c.text }]}>מידע תחנה</Text>
+            <Text style={[styles.tagline, { fontSize: font(10), color: c.textMuted }]}>זמני הגעת אוטובוסים · ישראל</Text>
+            <LiveBadge />
+          </View>
         </View>
 
-        <LiveBadge />
         <View style={styles.divider} />
 
         <ScrollView
@@ -89,7 +93,14 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 22, fontWeight: '900', color: '#fff', letterSpacing: -0.5, textAlign: 'right' },
   tagline: { fontSize: 10, color: colors.textMuted, marginTop: 3, textAlign: 'right' },
-  busIcon: { fontSize: 34 },
+  busIconWrap: {
+    width: 52, height: 52, borderRadius: 14,
+    backgroundColor: '#1d4ed8',
+    alignItems: 'center', justifyContent: 'center',
+    shadowColor: '#0ea5e9', shadowOpacity: 0.5, shadowRadius: 12, shadowOffset: { width: 0, height: 0 },
+    elevation: 8,
+  },
+  busIcon: { fontSize: 28 },
   divider: {
     height: 1,
     backgroundColor: colors.divider,
