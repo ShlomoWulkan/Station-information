@@ -1,4 +1,7 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, abort, jsonify, request
+
+import validators
+from config import DEFAULT_STOPS_LIMIT
 from services.gtfs_client import get_stops_in_bounds
 
 stops_bp = Blueprint("stops", __name__)
@@ -9,16 +12,17 @@ def get_stops():
     """
     GET /stops?min_lat=&max_lat=&min_lon=&max_lon=&limit=300
 
-    מחזיר תחנות בתוך מסגרת גיאוגרפית (bounding box).
+    תחנות בתוך מסגרת גיאוגרפית, הקרובות למרכז המסגרת קודם.
     """
     try:
-        min_lat = float(request.args["min_lat"])
-        max_lat = float(request.args["max_lat"])
-        min_lon = float(request.args["min_lon"])
-        max_lon = float(request.args["max_lon"])
-        limit   = int(request.args.get("limit", 300))
-    except (KeyError, ValueError):
-        return jsonify({"error": "חסרים פרמטרים: min_lat, max_lat, min_lon, max_lon"}), 400
+        min_lat = validators.latitude(request.args.get("min_lat", type=float))
+        max_lat = validators.latitude(request.args.get("max_lat", type=float))
+        min_lon = validators.longitude(request.args.get("min_lon", type=float))
+        max_lon = validators.longitude(request.args.get("max_lon", type=float))
+    except TypeError:
+        abort(400, description="נדרשים min_lat, max_lat, min_lon, max_lon")
 
-    results = get_stops_in_bounds(min_lat, max_lat, min_lon, max_lon, limit)
-    return jsonify(results)
+    validators.bounding_box(min_lat, max_lat, min_lon, max_lon)
+    limit = validators.stops_limit(request.args.get("limit", type=int, default=DEFAULT_STOPS_LIMIT))
+
+    return jsonify(get_stops_in_bounds(min_lat, max_lat, min_lon, max_lon, limit))

@@ -1,10 +1,14 @@
-from flask import Blueprint, jsonify
-import requests
+import logging
 
-from services.alerts_client import fetch_alerts
+from flask import Blueprint, jsonify
+from requests import RequestException
+
 import cache
 from config import CACHE_TTL_ALERTS
+from errors import UpstreamError
+from services.alerts_client import fetch_alerts
 
+log = logging.getLogger(__name__)
 alerts_bp = Blueprint("alerts", __name__)
 
 
@@ -13,13 +17,8 @@ def get_alerts():
     """
     GET /alerts
 
-    מחזיר התראות שירות פעילות מממשק GTFS-Realtime.
-    תשובה לדוגמה:
-    [
-      { "id": "1", "header": "עיכובים בקו 5", "description": "...",
-        "routes": ["5"], "stops": [] },
-      ...
-    ]
+    [{ "id": "1", "header": "עיכובים בקו 5", "description": "...",
+       "routes": ["5"], "stops": [] }, ...]
     """
     cached = cache.get("alerts", CACHE_TTL_ALERTS)
     if cached is not None:
@@ -27,10 +26,11 @@ def get_alerts():
 
     try:
         data = fetch_alerts()
-    except requests.HTTPError as e:
-        return jsonify({"error": f"שגיאת API: {e.response.status_code}"}), 502
+    except RequestException as e:
+        raise UpstreamError(f"alerts request failed: {e}") from e
     except Exception as e:
-        return jsonify({"error": str(e)}), 502
+        # פיענוח protobuf כושל אינו RequestException.
+        raise UpstreamError(f"alerts feed could not be parsed: {e}") from e
 
-    cache.set("alerts", data)
+    cache.put("alerts", data)
     return jsonify(data)

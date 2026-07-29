@@ -1,20 +1,27 @@
 from flask import Blueprint, jsonify
+
+import validators
 from services.gtfs_client import get_route_stops, routes_ready
+
+from .routes import WARMING_UP
 
 route_stops_bp = Blueprint("route_stops", __name__)
 
 
 @route_stops_bp.route("/route-stops/<station_code>/<line_number>")
-def get(station_code: str, line_number: str):
+def get_route_stops_route(station_code: str, line_number: str):
     """
     GET /route-stops/<station_code>/<line_number>
-    מחזיר תחנות הקו הספציפי שעובר בתחנה זו.
+
     [{ "id", "code", "name", "lat", "lon", "sequence", "isCurrent" }, ...]
     """
-    if not routes_ready():
-        return jsonify({"error": "קווים עדיין נטענים, נסה שוב בעוד כמה דקות"}), 503
+    code = validators.station_code(station_code)
+    line = validators.line_number(line_number)
 
-    stops = get_route_stops(station_code, line_number)
+    if not routes_ready():
+        return jsonify({"error": WARMING_UP}), 503
+
+    stops = get_route_stops(code, line)
     if not stops:
-        return jsonify({"error": f"לא נמצא קו {line_number} בתחנה {station_code}"}), 404
+        return jsonify({"error": f"לא נמצא קו {line} בתחנה {code}"}), 404
     return jsonify(stops)

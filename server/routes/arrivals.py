@@ -1,11 +1,16 @@
-from flask import Blueprint, jsonify
-import requests
+import logging
 
+from flask import Blueprint, jsonify
+from requests import RequestException
+
+import cache
+import validators
+from config import CACHE_TTL_ARRIVALS
+from errors import UpstreamError
 from services.siri_client import fetch_arrivals
 from xml_parser import parse_arrivals
-import cache
-from config import CACHE_TTL
 
+log = logging.getLogger(__name__)
 arrivals_bp = Blueprint("arrivals", __name__)
 
 
@@ -14,25 +19,23 @@ def get_arrivals(station_code: str):
     """
     GET /arrivals/<station_code>
 
-    מחזיר רשימת נסיעות קרובות לתחנה.
-    תשובה לדוגמה:
-    [
-      { "lineNumber": "5", "destination": "בת ים", "minutesUntilArrival": 3, "isRealTime": true },
-      ...
-    ]
+    [{ "lineNumber": "5", "destination": "בת ים",
+       "minutesUntilArrival": 3, "isRealTime": true }, ...]
     """
-    cache_key = f"arr:{station_code}"
-    cached = cache.get(cache_key, CACHE_TTL)
+    code = validators.station_code(station_code)
+
+    cache_key = f"arr:{code}"
+    cached = cache.get(cache_key, CACHE_TTL_ARRIVALS)
     if cached is not None:
         return jsonify(cached)
 
     try:
-        xml  = fetch_arrivals(station_code)
-        data = parse_arrivals(xml)
-    except requests.HTTPError as e:
-        return jsonify({"error": f"שגיאת API: {e.response.status_code}"}), 502
-    except Exception as e:
-        return jsonify({"error": str(e)}), 502
+        data = parse_arrivals(fetch_arrivals(code))
+    except RequestException as e:
+        # ההודעה ללקוח גנרית — str(e) מכיל את ה-URL, ובו המפתח.
+        raise UpstreamError(f"SIRI request failed for {code}: {e}") from e
+    except ValueError as e:
+        raise UpstreamError(f"SIRI returned unparseable XML for {code}: {e}") from e
 
-    cache.set(cache_key, data)
+    cache.put(cache_key, data)
     return jsonify(data)
