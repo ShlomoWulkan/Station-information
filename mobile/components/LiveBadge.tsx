@@ -1,55 +1,59 @@
-import { useEffect, useRef } from 'react';
-import { View, Text, Animated, StyleSheet } from 'react-native';
+import { View, Text, Animated } from 'react-native';
+import { ARRIVALS_STALE_MS } from '@/constants/config';
+import { stationStrings } from '@/constants/strings';
 import { colors } from '@/constants/theme';
 import { useA11y } from '@/hooks/useA11y';
+import { usePulse } from '@/hooks/usePulse';
+import { useTicker } from '@/hooks/useTicker';
+import { formatAge } from '@/utils/time';
+import { styles } from './LiveBadge.styles';
 
-export function LiveBadge() {
-  const { reduceMotion, font } = useA11y();
-  const opacity = useRef(new Animated.Value(1)).current;
+export type LiveState = 'live' | 'stale' | 'offline';
 
-  useEffect(() => {
-    if (reduceMotion) { opacity.setValue(1); return; }
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, { toValue: 0.3, duration: 750, useNativeDriver: true }),
-        Animated.timing(opacity, { toValue: 1, duration: 750, useNativeDriver: true }),
-      ])
-    ).start();
-    return () => opacity.stopAnimation();
-  }, [reduceMotion]);
+interface Props {
+  /**
+   * חובה. התג הזה הצהיר בעבר "עדכון בזמן אמת" בכל מקום שרנדר אותו, כולל מסכים
+   * שלא הציגו נתון חי בכלל. הצהרת טריות היא טענה, ולכן היא נדרשת במפורש.
+   */
+  state: LiveState;
+  /** חותמת זמן של הנתון האחרון. כשמועברת, הגיל מוצג לצד התג. */
+  updatedAt?: number | null;
+}
+
+const DOT_COLOR: Record<LiveState, string> = {
+  live: colors.liveDot,
+  stale: colors.warning,
+  offline: colors.error,
+};
+
+/** גוזר את מצב התג מגיל הנתון, במקום להצהיר "חי" בלי קשר למציאות. */
+export function liveStateFor(updatedAt: number | null, failed: boolean): LiveState {
+  if (failed || updatedAt === null) return 'offline';
+  return Date.now() - updatedAt > ARRIVALS_STALE_MS ? 'stale' : 'live';
+}
+
+export function LiveBadge({ state, updatedAt }: Props) {
+  const { font } = useA11y();
+  const opacity = usePulse({ enabled: state === 'live' });
+
+  // מרנדר מחדש כדי שהגיל המוצג יזוז עם הזמן.
+  useTicker({ intervalMs: 10_000, enabled: updatedAt != null });
+
+  const age = updatedAt != null ? formatAge(Date.now() - updatedAt) : null;
+  const label = stationStrings.live[state];
 
   return (
-    <View style={styles.badge}>
-      <Animated.View style={[styles.dot, { opacity }]} />
-      <Text style={[styles.text, { fontSize: font(10) }]}>עדכון בזמן אמת</Text>
+    <View
+      style={[styles.badge, state !== 'live' && styles.badgeMuted]}
+      accessibilityRole="text"
+      accessibilityLiveRegion="polite"
+      accessibilityLabel={age ? `${label}. ${age}` : label}
+    >
+      <Animated.View style={[styles.dot, { opacity, backgroundColor: DOT_COLOR[state] }]} />
+      <Text style={[styles.text, { fontSize: font(10) }]}>
+        {label}
+        {age ? ` · ${age}` : ''}
+      </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: colors.accentBg,
-    borderColor: colors.accentBorder,
-    borderWidth: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: 20,
-    alignSelf: 'flex-start',
-    marginTop: 12,
-  },
-  dot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-    backgroundColor: colors.liveDot,
-  },
-  text: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: 'rgba(180,210,255,0.8)',
-  },
-  // font size applied inline via useA11y
-});
