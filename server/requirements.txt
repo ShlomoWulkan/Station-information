@@ -3,3 +3,7 @@ flask-cors>=4.0.0
 requests>=2.31.0
 python-dotenv>=1.0.0
 gtfs-realtime-bindings>=1.0.0
+# ה-XML מגיע מגורם חיצוני — ראה xml_parser.py
+defusedxml>=0.7.1
+# שרת WSGI לייצור. שרת הפיתוח של Flask אינו מיועד לחשיפה לאינטרנט.
+gunicorn>=22.0.0
