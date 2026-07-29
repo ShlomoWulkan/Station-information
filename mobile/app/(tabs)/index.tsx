@@ -2,8 +2,8 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { HomeButton } from '@/components/HomeButton';
-import { LiveBadge } from '@/components/LiveBadge';
 import { colors, spacing, neonColors, iconGradients } from '@/constants/theme';
+import { NEARBY_RADIUS_M } from '@/constants/config';
 import { useFavorites } from '@/store/favoritesStore';
 import { useRecent } from '@/store/recentStore';
 import { useA11y } from '@/hooks/useA11y';
@@ -23,7 +23,6 @@ export default function HomeScreen() {
           <View>
             <Text style={[styles.title, { fontSize: font(22), color: c.text }]}>מידע תחנה</Text>
             <Text style={[styles.tagline, { fontSize: font(10), color: c.textMuted }]}>זמני הגעת אוטובוסים · ישראל</Text>
-            <LiveBadge />
           </View>
         </View>
 
@@ -37,7 +36,7 @@ export default function HomeScreen() {
           <HomeButton
             icon="📍"
             title="חיפוש לפי מיקום"
-            subtitle="תחנות עד 100 מטר"
+            subtitle={`תחנות עד ${NEARBY_RADIUS_M} מטר`}
             neonColor={neonColors.blue}
             iconColors={iconGradients.location}
             onPress={() => router.push('/search-location')}
