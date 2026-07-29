@@ -9,7 +9,19 @@ export const colors = {
   accent: '#60a5fa',
   accentBorder: 'rgba(60,130,255,0.35)',
   accentBg: 'rgba(0,70,180,0.2)',
+  /** טקסט על גבי accent. היה צרוב כ-'#000d28' בכשמונה מקומות. */
+  onAccent: '#000d28',
   liveDot: '#4ade80',
+  /** שגיאות. היה צרוב כ-'#f87171' בחמישה מקומות. */
+  error: '#f87171',
+  errorBg: 'rgba(248,113,113,0.1)',
+  errorBorder: 'rgba(248,113,113,0.35)',
+  /** אזהרות ומצב לא-טרי. */
+  warning: '#fbbf24',
+  warningBg: 'rgba(251,191,36,0.12)',
+  warningBorder: 'rgba(251,191,36,0.4)',
+  /** משטח מורם מעל הרקע — מודלים ופאנלים. */
+  surfaceRaised: '#001230',
   badge: '#93c5fd',
   badgeBg: 'rgba(30,80,200,0.3)',
   badgeBorder: 'rgba(60,130,255,0.4)',
