@@ -5,3 +5,8 @@
 expo-env.d.ts
 android
 # @end expo-cli
+
+# סודות — הערכים עצמם. .env.example כן נכנס לגיט.
+.env
+.env.local
+.env.*.local
