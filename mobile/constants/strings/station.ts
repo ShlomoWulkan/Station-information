@@ -23,8 +23,6 @@ export const stationStrings = {
   routeStopsTitle: 'תחנות הקו',
   hereBadge: 'כאן',
 
-  fixturesWarning: 'נתוני דמו — לא זמני אמת',
-
   live: {
     live: 'עדכון בזמן אמת',
     stale: 'הנתון אינו מעודכן',

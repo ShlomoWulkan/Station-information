@@ -23,13 +23,6 @@ if (__DEV__ && !configuredUrl) {
   );
 }
 
-/**
- * נתוני דמו במקום קריאות אמיתיות. שתי שכבות בכוונה: __DEV__ מבטיח שגם אם
- * הדגל ידלוף לקונפיג של בילד production, נתונים מזויפים לא יוצגו למשתמש.
- * ראה services/fixtures/.
- */
-export const USE_FIXTURES = __DEV__ && process.env.EXPO_PUBLIC_USE_FIXTURES === '1';
-
 /** timeout לכל קריאת רשת. fetch ב-RN נתקע ללא הגבלה בלי זה. */
 export const REQUEST_TIMEOUT_MS = 10_000;
 

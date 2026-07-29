@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomNav } from '@/components/BottomNav';
-import { FixturesBanner } from '@/components/FixturesBanner';
 import { LiveBadge, liveStateFor } from '@/components/LiveBadge';
 import { colors, spacing } from '@/constants/theme';
 import { ArrivalsTab } from '@/features/station/ArrivalsTab';
@@ -39,7 +38,6 @@ export default function StationDetailScreen() {
         )}
 
         <StationTabs active={tab} onChange={setTab} />
-        <FixturesBanner />
 
         {tab === 'arrivals' ? (
           <ArrivalsTab
