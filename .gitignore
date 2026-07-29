@@ -8,6 +8,13 @@ node_modules
 
 # Python
 server/venv/
-server/__pycache__/
-server/*.pyc
-server/.env
+# ללא קידומת נתיב — התבנית תופסת גם תיקיות מקוננות כמו routes/ ו-services/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# סודות — הערכים עצמם. קבצי .env.example כן נכנסים.
+.env
+.env.local
+.env.*.local
