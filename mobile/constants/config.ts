@@ -47,3 +47,6 @@ export const MAP_STOPS_DEBOUNCE_MS = 500;
 
 /** זום התחלתי של המפה, במעלות. */
 export const MAP_INITIAL_DELTA = 0.01;
+
+/** תאריך עדכון הצהרת הנגישות. לעדכן כשההצהרה נבדקת מחדש. */
+export const A11Y_STATEMENT_UPDATED = 'מרץ 2026';
