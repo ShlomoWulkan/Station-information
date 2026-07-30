@@ -24,6 +24,17 @@ GTFS_ZIP_URL = os.getenv(
 )
 API_KEY = os.getenv("API_KEY", "")
 
+# מציינים שנשארים ב-.env אחרי העתקה מ-.env.example. חשוב לזהות אותם בנפרד
+# מ"ריק": מחרוזת כזאת עוברת bool() בהצלחה, ולכן בדיקה תמימה מדווחת שהמפתח
+# מוגדר בזמן שהוא בכלל לא הוזן. זה בדיוק מה שקרה כאן.
+_PLACEHOLDERS = frozenset(
+    {"YOUR_API_KEY_HERE", "YOUR_KEY_HERE", "CHANGE_ME", "CHANGEME", "TODO", ""}
+)
+
+
+def api_key_is_real() -> bool:
+    return API_KEY.strip().upper() not in _PLACEHOLDERS
+
 # נתיב לשרשרת CA ספציפית, אם התעודה של mot.gov.il בעייתית. ריק = מאגר ה-CA
 # של המערכת. זו החלופה לכיבוי אימות TLS, שהיה כאן וחשף את מפתח ה-API.
 SIRI_CA_BUNDLE = os.getenv("SIRI_CA_BUNDLE", "")

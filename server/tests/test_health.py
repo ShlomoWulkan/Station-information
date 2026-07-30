@@ -1,6 +1,7 @@
 """בדיקות ל-/health, כולל דיווח הקשר למשרד התחבורה."""
 import pytest
 
+import config
 from services import upstream_status
 
 
@@ -8,6 +9,9 @@ from services import upstream_status
 def _reset_status(monkeypatch):
     monkeypatch.setattr(upstream_status, "_reachable", None)
     monkeypatch.setattr(upstream_status, "_reason", None)
+    # ה-.env של הסביבה עשוי להכיל את המציין מ-.env.example, ואז check() נעצר
+    # לפני שהוא מגיע ל-SIRI. הבדיקות כאן בוחנות את נתיב הרשת, לא את השער.
+    monkeypatch.setattr(config, "API_KEY", "test-key")
 
 
 def test_reports_status_ok(client):

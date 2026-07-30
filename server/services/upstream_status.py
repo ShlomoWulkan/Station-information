@@ -9,6 +9,7 @@ import logging
 import threading
 from typing import Optional
 
+from config import api_key_is_real
 from services.probe import redact
 from services.siri_client import fetch_arrivals
 
@@ -29,6 +30,15 @@ def status() -> dict:
 def check() -> bool:
     """בודק פעם אחת ושומר את התוצאה."""
     global _reachable, _reason
+
+    # נבדק לפני היציאה לרשת: בלי מפתח אמיתי הקריאה תיכשל בכל מקרה, והשגיאה
+    # שתחזור לא תרמוז שהסיבה היא ש-.env מעולם לא מולא.
+    if not api_key_is_real():
+        _reachable = False
+        _reason = "API_KEY אינו מוגדר — המציין מ-.env.example עדיין במקומו"
+        log.error("API_KEY לא הוזן ב-.env. /arrivals לא יעבוד. ראה .env.example")
+        return False
+
     try:
         fetch_arrivals(PROBE_STATION)
         _reachable, _reason = True, None

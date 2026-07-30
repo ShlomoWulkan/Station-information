@@ -9,7 +9,7 @@ import logging
 
 from flask import Blueprint, abort, jsonify, request
 
-from config import API_KEY, DIAG_TOKEN, SIRI_CA_BUNDLE
+from config import API_KEY, DIAG_TOKEN, SIRI_CA_BUNDLE, api_key_is_real
 from services import probe
 
 log = logging.getLogger(__name__)
@@ -39,6 +39,8 @@ def upstream():
             "outboundIp": probe.outbound_ip(),
             # אורך בלבד — מאשר שהמפתח נטען מבלי לחשוף אותו.
             "apiKeyLength": len(API_KEY),
+            # false פירושו שהמציין מ-.env.example נשאר במקומו.
+            "apiKeyIsReal": api_key_is_real(),
             "caBundle": SIRI_CA_BUNDLE or None,
             # כתובת שגויה ב-.env נראית כמו תקלת רשת. resolves=false מזהה את
             # זה מיד, במקום לשלוח לחפש בעיות תעודה או חסימות IP.

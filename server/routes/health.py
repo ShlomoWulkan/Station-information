@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
 
 import cache
-from config import API_KEY
+from config import api_key_is_real
 from services import upstream_status
 from services.gtfs_client import routes_ready, stops_count
 
@@ -27,7 +27,9 @@ def get_health():
     return jsonify(
         {
             "status": "ok",
-            "apiKeyConfigured": bool(API_KEY),
+            # false גם כשהמציין מ-.env.example נשאר במקומו — מחרוזת כזאת
+            # עוברת bool() ולכן דווחה בעבר כמפתח תקין.
+            "apiKeyConfigured": api_key_is_real(),
             "gtfsStopsLoaded": stops_count(),
             "routesReady": routes_ready(),
             "cacheEntries": cache.size(),
