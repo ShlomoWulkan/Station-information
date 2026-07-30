@@ -115,7 +115,11 @@ def parse_arrivals(xml_text: str) -> list[dict]:
             {
                 "id": _journey_id(visit, journey, line, expected or aimed),
                 "lineNumber": line,
+                # משרד התחבורה שולח DestinationRef (קוד תחנה) ולא DestinationName.
+                # התרגום לשם נעשה מול GTFS ב-services/destinations.py, כדי שהמודול
+                # הזה יישאר פיענוח טהור בלי תלות בנתוני GTFS.
                 "destination": journey.findtext(_tag("DestinationName"), ""),
+                "destinationRef": journey.findtext(_tag("DestinationRef"), ""),
                 "minutesUntilArrival": minutes,
                 "isRealTime": is_real_time,
             }

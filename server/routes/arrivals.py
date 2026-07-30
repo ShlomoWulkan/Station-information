@@ -7,6 +7,7 @@ import cache
 import validators
 from config import CACHE_TTL_ARRIVALS
 from errors import UpstreamError
+from services import destinations
 from services.siri_client import fetch_arrivals
 from xml_parser import parse_arrivals
 
@@ -30,7 +31,8 @@ def get_arrivals(station_code: str):
         return jsonify(cached)
 
     try:
-        data = parse_arrivals(fetch_arrivals(code))
+        # SIRI נותן קוד תחנת יעד; השם מגיע מ-GTFS.
+        data = destinations.resolve(parse_arrivals(fetch_arrivals(code)))
     except RequestException as e:
         # ההודעה ללקוח גנרית — str(e) מכיל את ה-URL, ובו המפתח.
         raise UpstreamError(f"SIRI request failed for {code}: {e}") from e
