@@ -1,43 +1,47 @@
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Station } from '@/types';
+import { dropLegacy, readLegacy } from './migrate';
+import { isStationList, normalize, prepend } from './stationList';
 
-const KEY = '@recent';
-const MAX = 10;
+const LEGACY_KEY = '@recent';
+const STORAGE_KEY = 'recent-v1';
+const MAX_ENTRIES = 10;
 
 interface RecentStore {
   recent: Station[];
-  load: () => Promise<void>;
-  push: (s: Station) => Promise<void>;
-  remove: (id: string) => Promise<void>;
-  clear: () => Promise<void>;
+  push: (station: Station) => void;
+  remove: (id: string) => void;
+  clear: () => void;
 }
 
-export const useRecent = create<RecentStore>((set, get) => ({
-  recent: [],
+export const useRecent = create<RecentStore>()(
+  persist(
+    (set, get) => ({
+      recent: [],
 
-  load: async () => {
-    try {
-      const raw = await AsyncStorage.getItem(KEY);
-      if (raw) set({ recent: JSON.parse(raw) });
-    } catch {}
-  },
+      push: (station) => set({ recent: prepend(get().recent, station, MAX_ENTRIES) }),
 
-  push: async (station) => {
-    const normalized = { ...station, id: String(station.id), code: String(station.code) };
-    const next = [normalized, ...get().recent.filter(r => String(r.id) !== normalized.id)].slice(0, MAX);
-    set({ recent: next });
-    await AsyncStorage.setItem(KEY, JSON.stringify(next));
-  },
+      remove: (id) => set({ recent: get().recent.filter((s) => String(s.id) !== String(id)) }),
 
-  remove: async (id) => {
-    const next = get().recent.filter(r => String(r.id) !== String(id));
-    set({ recent: next });
-    await AsyncStorage.setItem(KEY, JSON.stringify(next));
-  },
+      clear: () => set({ recent: [] }),
+    }),
+    {
+      name: STORAGE_KEY,
+      version: 1,
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({ recent: state.recent }),
 
-  clear: async () => {
-    set({ recent: [] });
-    await AsyncStorage.removeItem(KEY);
-  },
-}));
+      onRehydrateStorage: () => async (state) => {
+        if (!state || state.recent.length > 0) return;
+
+        const legacy = await readLegacy(LEGACY_KEY, isStationList);
+        if (legacy && legacy.length > 0) {
+          useRecent.setState({ recent: legacy.map(normalize).slice(0, MAX_ENTRIES) });
+        }
+        await dropLegacy(LEGACY_KEY);
+      },
+    },
+  ),
+);
