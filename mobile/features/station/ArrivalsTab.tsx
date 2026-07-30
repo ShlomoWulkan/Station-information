@@ -84,7 +84,7 @@ export function ArrivalsTab({
 
         {visible.map((arrival) => (
           <BusArrivalRow
-            key={`${arrival.lineNumber}-${arrival.destination}-${arrival.minutesUntilArrival}`}
+            key={arrival.id}
             arrival={arrival}
             currentStationCode={stationCode}
             receivedAt={updatedAt}

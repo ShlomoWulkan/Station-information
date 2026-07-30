@@ -46,6 +46,37 @@ def _first_text(element, *names: str) -> str:
     return ""
 
 
+def _journey_id(visit, journey, line: str, timestamp: str) -> str:
+    """
+    מזהה לנסיעה בודדת, ממה ש-SIRI כבר נותן.
+
+    נופל לחותמת הזמן המלאה ולא לדקות המעוגלות — שני אוטובוסים של אותו קו
+    שמגיעים באותה דקה זה מצב לגיטימי, וזה בדיוק מה שייצר מפתחות כפולים.
+    """
+    identifier = (
+        visit.findtext(_tag("ItemIdentifier"), "")
+        or _first_text(journey, "VehicleRef", "DatedVehicleJourneyRef")
+        or journey.findtext(f".//{_tag('DatedVehicleJourneyRef')}", "")
+    )
+    return identifier or f"{line}|{timestamp}"
+
+
+def _ensure_unique_ids(rows: list[dict]) -> None:
+    """
+    מוסיף סיומת למזהים שחוזרים על עצמם.
+
+    הערובה בפועל: היא לא תלויה בשאלה אילו שדות SIRI שלח, ולכן מפתחות כפולים
+    לא יכולים לחזור גם אם הפורמט ישתנה.
+    """
+    seen: dict[str, int] = {}
+    for row in rows:
+        base = row["id"]
+        count = seen.get(base, 0)
+        seen[base] = count + 1
+        if count:
+            row["id"] = f"{base}#{count}"
+
+
 def parse_arrivals(xml_text: str) -> list[dict]:
     """
     מנתח XML של SIRI לרשימת נסיעות, הקרובה קודם.
@@ -79,9 +110,11 @@ def parse_arrivals(xml_text: str) -> list[dict]:
             skipped += 1
             continue
 
+        line = journey.findtext(_tag("PublishedLineName"), "")
         results.append(
             {
-                "lineNumber": journey.findtext(_tag("PublishedLineName"), ""),
+                "id": _journey_id(visit, journey, line, expected or aimed),
+                "lineNumber": line,
                 "destination": journey.findtext(_tag("DestinationName"), ""),
                 "minutesUntilArrival": minutes,
                 "isRealTime": is_real_time,
@@ -92,4 +125,5 @@ def parse_arrivals(xml_text: str) -> list[dict]:
         log.info("%d נסיעות דולגו — זמן חסר או לא ניתן לפיענוח", skipped)
 
     results.sort(key=lambda r: r["minutesUntilArrival"])
+    _ensure_unique_ids(results)
     return results
