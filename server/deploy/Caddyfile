@@ -1,0 +1,28 @@
+# reverse proxy עם HTTPS אוטומטי.
+#
+# החלף את השם בתת-הדומיין שלך. Caddy משיג ומחדש תעודת Let's Encrypt לבד,
+# מפנה HTTP ל-HTTPS, ומגיש HTTP/2 — בלי תוספים ובלי קונפיג נוסף.
+#
+# למה בכלל שם ולא ה-IP: Let's Encrypt כן מנפיק תעודות ל-IP מאז ינואר 2026,
+# אבל רק בפרופיל shortlived (תעודות ל-6 ימים), ול-Caddy יש באג פתוח בנתיב
+# הזה. עם שם זה פשוט עובד. תת-דומיין DuckDNS חינמי ומספיק.
+
+midaa-tachana.duckdns.org {
+	reverse_proxy 127.0.0.1:5000
+
+	# X-Forwarded-For וכו' מועברים כברירת מחדל. הלוג נחוץ כדי לראות תעבורה
+	# אמיתית — לשרת עצמו אין access log.
+	log {
+		output file /var/log/caddy/midaa-tachana.log
+		format console
+	}
+
+	encode gzip
+
+	header {
+		# ה-API מוגש רק ללקוחות שלנו; אין דפים לדפדפן ואין מה למסגר.
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		-Server
+	}
+}

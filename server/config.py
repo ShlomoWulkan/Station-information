@@ -24,6 +24,10 @@ GTFS_ZIP_URL = os.getenv(
 )
 API_KEY = os.getenv("API_KEY", "")
 
+# נתיב לשרשרת CA ספציפית, אם התעודה של mot.gov.il בעייתית. ריק = מאגר ה-CA
+# של המערכת. זו החלופה לכיבוי אימות TLS, שהיה כאן וחשף את מפתח ה-API.
+SIRI_CA_BUNDLE = os.getenv("SIRI_CA_BUNDLE", "")
+
 # ── הרצה ────────────────────────────────────────────────────────────────────
 
 PORT = _int_env("PORT", 5000)

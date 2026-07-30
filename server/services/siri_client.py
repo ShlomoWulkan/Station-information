@@ -10,7 +10,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-from config import API_KEY, SIRI_BASE_URL, SIRI_TIMEOUT
+from config import API_KEY, SIRI_BASE_URL, SIRI_CA_BUNDLE, SIRI_TIMEOUT
 
 log = logging.getLogger(__name__)
 
@@ -30,13 +30,15 @@ _session.mount("http://", HTTPAdapter(max_retries=_RETRY))
 
 def fetch_arrivals(station_code: str) -> str:
     """מחזיר XML של זמני הגעה לתחנה. זורק requests.HTTPError על סטטוס שגיאה."""
-    # אימות TLS פעיל בכוונה. הקריאה הזאת נושאת את API_KEY, ולכן כיבוי האימות
-    # אפשר לכל מי שיכול להתייצב בדרך להתחזות למשרד התחבורה ולקצור את המפתח.
-    # אם התעודה בעייתית — לצרף CA ספציפי ב-config.SIRI_CA_BUNDLE, לא לכבות.
+    # אימות TLS פעיל בכוונה. הקריאה נושאת את API_KEY, ולכן כיבוי האימות אפשר
+    # לכל מי שיכול להתייצב בדרך להתחזות למשרד התחבורה ולקצור את המפתח.
+    # אם התעודה בעייתית — SIRI_CA_BUNDLE מצמצם את האמון לשרשרת אחת, במקום
+    # לבטל אותו מול כל העולם. ראה deploy/README.md.
     response = _session.get(
         f"{SIRI_BASE_URL}/xml",
         params={"Key": API_KEY, "MonitoringRef": station_code},
         timeout=SIRI_TIMEOUT,
+        verify=SIRI_CA_BUNDLE or True,
     )
     log.debug("SIRI %s → %s", station_code, response.status_code)
     response.raise_for_status()
