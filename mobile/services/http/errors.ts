@@ -32,6 +32,19 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * שגיאה שההודעה שלה כבר מנוסחת למשתמש.
+ *
+ * לכשלים שאינם רשת — הרשאת מיקום שנדחתה, GPS שלא הצליח — כדי שגם הם יעברו
+ * דרך אותו נתיב תצוגה בלי שכל מסך ינסח מחדש.
+ */
+export class UserFacingError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'UserFacingError';
+  }
+}
+
 /** ממפה קוד HTTP לסיבה. */
 export function kindForStatus(status: number): ApiErrorKind {
   if (status === 404) return 'notFound';
