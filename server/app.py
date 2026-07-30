@@ -19,6 +19,7 @@ from config import DEBUG, HOST, PORT
 from errors import register_error_handlers
 from logging_config import configure_logging
 from routes import register_routes
+from services import upstream_status
 from services.gtfs_client import load_stops
 
 log = logging.getLogger(__name__)
@@ -43,6 +44,9 @@ def create_app(load_data: bool = True) -> Flask:
     if load_data:
         # נטען כאן ולא בבלוק __main__, אחרת gunicorn מעלה שרת בלי תחנות בכלל.
         load_stops()
+        # כשל בקשר למשרד התחבורה יופיע בלוג מיד, במקום להתגלות רק כשמשתמש
+        # לוחץ על תחנה. ברקע, כדי לא לעכב את שאר הנתיבים שאינם תלויים בו.
+        upstream_status.check_in_background()
 
     return app
 
