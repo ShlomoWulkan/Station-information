@@ -10,3 +10,6 @@ android
 .env
 .env.local
 .env.*.local
+
+# תיקיית עבודה של Expo — נוצרת מחדש בהרצה, ו-devices.json מכיל מצב מקומי
+.expo/
