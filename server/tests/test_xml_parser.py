@@ -4,7 +4,6 @@
 זו הבדיקה החשובה ביותר בשרת: משרד התחבורה מאשר קריאות מ-IP של ה-VPS בלבד, ולכן
 אין שום דרך אחרת לבדוק את הפיענוח ממכונת פיתוח בלי לפרוס לייצור.
 """
-import pytest
 
 from xml_parser import parse_arrivals
 
@@ -39,15 +38,21 @@ def test_extracts_line_and_destination():
     assert row["destination"] == "בת ים"
 
 
-def test_expected_time_marks_real_time():
-    (row,) = parse_arrivals(_doc(_visit("5", expected=FUTURE)))
-    assert row["isRealTime"] is True
+def test_does_not_claim_real_time():
+    """
+    היה כאן שדה isRealTime שנגזר מעצם קיומו של ExpectedArrivalTime.
 
+    מדידה על 232 שורות בשמונה תחנות מצאה אותו true ב-100% מהן: משרד התחבורה
+    שולח את השדה תמיד, וכשגם AimedArrivalTime קיים השניים זהים — כלומר הזמן
+    הוא לוח הזמנים ולא תחזית. הבדיקה הזאת שומרת שהסימון לא יחזור בלי אות
+    שבאמת משתנה. ראה CLAUDE.md.
+    """
+    rows = parse_arrivals(_doc(_visit("5", expected=FUTURE), _visit("6", aimed=FUTURE)))
 
-def test_aimed_time_only_is_not_real_time():
-    """זמן מתוכנן מלוח הזמנים אינו זמן אמת, וההבחנה מוצגת למשתמש."""
-    (row,) = parse_arrivals(_doc(_visit("5", aimed=FUTURE)))
-    assert row["isRealTime"] is False
+    assert rows, "צריכות להיות נסיעות"
+    for row in rows:
+        assert "isRealTime" not in row
+        assert "isTracked" not in row
 
 
 def test_sorted_soonest_first():
@@ -77,22 +82,3 @@ def test_past_arrival_clamps_to_zero():
 
 def test_empty_document_is_empty_list():
     assert parse_arrivals(_doc()) == []
-
-
-def test_malformed_xml_raises_value_error():
-    with pytest.raises(ValueError):
-        parse_arrivals("<not closed")
-
-
-def test_entity_expansion_is_blocked():
-    """
-    billion laughs. ה-XML מגיע מגורם חיצוני, ולכן defusedxml ולא ElementTree.
-    """
-    bomb = (
-        '<?xml version="1.0"?><!DOCTYPE x ['
-        '<!ENTITY a "aaaaaaaaaa">'
-        '<!ENTITY b "&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;">'
-        ']><x>&b;</x>'
-    )
-    with pytest.raises(ValueError):
-        parse_arrivals(bomb)

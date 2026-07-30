@@ -8,8 +8,8 @@ interface Result {
   region: MapRegion | null;
   error: string | null;
   isLoading: boolean;
-  /** מבקש הרשאה ומיקום מחדש. */
-  locate: () => void;
+  /** מבקש הרשאה ומיקום מחדש, ומחזיר את האזור כדי שהמפה תוכל לזוז אליו. */
+  locate: () => Promise<MapRegion | null>;
 }
 
 /**
@@ -26,5 +26,5 @@ export function useUserLocation(): Result {
 
   const { data, error, isLoading, reload } = useAsyncResource(fetcher);
 
-  return { region: data, error, isLoading, locate: () => void reload() };
+  return { region: data, error, isLoading, locate: () => reload() };
 }

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import MapView from 'react-native-maps';
 import { router } from 'expo-router';
@@ -6,7 +6,8 @@ import { ErrorState } from '@/components/ui/ErrorState';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { mapStrings } from '@/constants/strings';
 import type { MapRegion } from '@/features/map/bounds';
-import { MapErrorBanner } from '@/features/map/MapErrorBanner';
+import { MapBanner } from '@/features/map/MapBanner';
+import { RecenterButton } from '@/features/map/RecenterButton';
 import { StationMarker } from '@/features/map/StationMarker';
 import { StationPopup } from '@/features/map/StationPopup';
 import { useMapStations } from '@/features/map/useMapStations';
@@ -18,10 +19,14 @@ export default function MapScreen() {
   const [selected, setSelected] = useState<LocatedStation | null>(null);
 
   const location = useUserLocation();
-  const { stations, error: stationsError, loadFor } = useMapStations();
+  const { stations, error: stationsError, isZoomedOut, loadFor } = useMapStations();
 
-  // המפה נטענת מחדש כשהאזור משתנה — onMapReady מטפל בטעינה הראשונה.
-  const locate = location.locate;
+  const recenter = useCallback(async () => {
+    const region = await location.locate();
+    if (!region) return;
+    mapRef.current?.animateToRegion(region, 500);
+    loadFor(region);
+  }, [location, loadFor]);
 
   const openStation = (station: LocatedStation) => {
     setSelected(null);
@@ -43,7 +48,7 @@ export default function MapScreen() {
   if (location.region === null) {
     return (
       <View style={styles.center}>
-        <ErrorState message={location.error ?? mapStrings.loading} onRetry={() => void locate()} />
+        <ErrorState message={location.error ?? mapStrings.loading} onRetry={() => void recenter()} />
       </View>
     );
   }
@@ -64,14 +69,13 @@ export default function MapScreen() {
         ))}
       </MapView>
 
-      {stationsError !== null && <MapErrorBanner message={stationsError} />}
+      <RecenterButton onPress={() => void recenter()} disabled={location.isLoading} />
+
+      {isZoomedOut && <MapBanner message={mapStrings.zoomInForStations} tone="info" />}
+      {!isZoomedOut && stationsError !== null && <MapBanner message={stationsError} />}
 
       {selected && (
-        <StationPopup
-          station={selected}
-          onOpen={openStation}
-          onDismiss={() => setSelected(null)}
-        />
+        <StationPopup station={selected} onOpen={openStation} onDismiss={() => setSelected(null)} />
       )}
     </View>
   );

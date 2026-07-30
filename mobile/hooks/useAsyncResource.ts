@@ -10,7 +10,8 @@ export interface AsyncResource<T> {
   /** רענון כשיש כבר נתון — להצגה ב-RefreshControl. */
   isRefreshing: boolean;
   updatedAt: number | null;
-  reload: (options?: { refresh?: boolean }) => Promise<void>;
+  /** מחזיר את התוצאה, או null בכשל — לקורא שצריך אותה מיד ולא דרך ה-state. */
+  reload: (options?: { refresh?: boolean }) => Promise<T | null>;
 }
 
 interface Options {
@@ -61,13 +62,16 @@ export function useAsyncResource<T>(
 
       try {
         const result = await fetcherRef.current();
-        if (!isMounted.current || id !== requestId.current) return;
+        if (!isMounted.current || id !== requestId.current) return null;
         setData(result);
         setUpdatedAt(Date.now());
         setError(null);
+        return result;
       } catch (e) {
-        if (!isMounted.current || id !== requestId.current) return;
-        setError(toUserMessage(e, fallbackMessage));
+        if (isMounted.current && id === requestId.current) {
+          setError(toUserMessage(e, fallbackMessage));
+        }
+        return null;
       } finally {
         if (isMounted.current && id === requestId.current) {
           setIsLoading(false);

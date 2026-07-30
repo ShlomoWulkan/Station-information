@@ -11,6 +11,8 @@ export const searchStrings = {
 
 export const mapStrings = {
   loading: 'טוען מפה...',
+  recenter: 'חזור למיקום שלי',
+  zoomInForStations: 'התקרב כדי לראות תחנות',
   stationsFailed: 'לא ניתן לרענן תחנות',
   tapForArrivals: 'לחץ לזמני הגעה',
   closePopup: 'סגור',

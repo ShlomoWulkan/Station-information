@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { MAP_MAX_MARKER_DELTA, MAP_STOPS_DEBOUNCE_MS } from '@/constants/config';
 import { errorStrings } from '@/constants/strings';
-import { MAP_STOPS_DEBOUNCE_MS } from '@/constants/config';
 import { fetchStopsInBounds } from '@/services/api';
 import { toUserMessage } from '@/services/http';
 import { hasCoords, type LocatedStation } from '@/types';
@@ -10,6 +10,8 @@ interface Result {
   stations: LocatedStation[];
   /** כשל רענון — מוצג כבאנר, בלי למחוק סמנים קיימים. */
   error: string | null;
+  /** התצוגה רחבה מדי לסמנים; המסך מציג רמז להתקרב. */
+  isZoomedOut: boolean;
   loadFor: (region: MapRegion) => void;
 }
 
@@ -21,6 +23,7 @@ interface Result {
 export function useMapStations(): Result {
   const [stations, setStations] = useState<LocatedStation[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isZoomedOut, setIsZoomedOut] = useState(false);
 
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isMounted = useRef(true);
@@ -49,10 +52,19 @@ export function useMapStations(): Result {
   const loadFor = useCallback(
     (region: MapRegion) => {
       if (debounceTimer.current) clearTimeout(debounceTimer.current);
+
+      // בתצוגה רחבה השרת מחזיר מאות תחנות שממילא חופפות. לא מבקשים בכלל.
+      if (region.latitudeDelta > MAP_MAX_MARKER_DELTA) {
+        setIsZoomedOut(true);
+        setStations([]);
+        return;
+      }
+
+      setIsZoomedOut(false);
       debounceTimer.current = setTimeout(() => void load(region), MAP_STOPS_DEBOUNCE_MS);
     },
     [load],
   );
 
-  return { stations, error, loadFor };
+  return { stations, error, isZoomedOut, loadFor };
 }

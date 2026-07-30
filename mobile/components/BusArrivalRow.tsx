@@ -21,7 +21,7 @@ export const BusArrivalRow = memo(function BusArrivalRow({
   currentStationCode,
   receivedAt,
 }: Props) {
-  const { lineNumber, destination, minutesUntilArrival, isRealTime } = arrival;
+  const { lineNumber, destination, minutesUntilArrival } = arrival;
   const { font, c } = useA11y();
 
   // נגזר מהשעון ולא מוחזק ב-state: הגרסה הקודמת העתיקה prop ל-state ועדכנה
@@ -60,8 +60,6 @@ export const BusArrivalRow = memo(function BusArrivalRow({
       >
         {destination}
       </Text>
-
-      {isRealTime && <View style={styles.liveDot} />}
 
       <View
         style={[

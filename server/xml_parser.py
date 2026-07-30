@@ -57,11 +57,12 @@ def parse_arrivals(xml_text: str) -> list[dict]:
         if call is None:
             continue
 
+        # שני השדות מתקבלים; ExpectedArrivalTime קיים תמיד ושווה ל-Aimed, ולכן
+        # אינו מעיד על תחזית חיה. ראה CLAUDE.md — היה כאן סימון "זמן אמת"
+        # שנגזר מעצם קיומו והיה true ב-232 מתוך 232 שורות שנדגמו.
         expected = first_text(call, "ExpectedArrivalTime", "ExpectedDepartureTime")
         aimed = first_text(call, "AimedArrivalTime", "AimedDepartureTime")
 
-        # זמן צפוי מגיע ממערכת הזמן-אמת; זמן מתוכנן הוא מלוח הזמנים.
-        is_real_time = bool(expected)
         minutes = _minutes_until(expected or aimed) if (expected or aimed) else None
         if minutes is None:
             skipped += 1
@@ -78,7 +79,6 @@ def parse_arrivals(xml_text: str) -> list[dict]:
                 "destination": journey.findtext(tag("DestinationName"), ""),
                 "destinationRef": journey.findtext(tag("DestinationRef"), ""),
                 "minutesUntilArrival": minutes,
-                "isRealTime": is_real_time,
             }
         )
 

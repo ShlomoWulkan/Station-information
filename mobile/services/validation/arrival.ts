@@ -16,7 +16,6 @@ export const parseArrival: Parser<BusArrival> = (raw) => {
     lineNumber,
     destination: asStringOr(raw.destination, ''),
     minutesUntilArrival,
-    isRealTime: raw.isRealTime === true,
   };
 };
 

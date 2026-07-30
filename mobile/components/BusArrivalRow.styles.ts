@@ -18,7 +18,6 @@ export const styles = StyleSheet.create({
   },
   lineNum: { color: colors.onAccent, fontWeight: '900' },
   destination: { flex: 1, textAlign: 'right' },
-  liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.liveDot },
   timeBadge: {
     backgroundColor: colors.card,
     borderWidth: 1,
