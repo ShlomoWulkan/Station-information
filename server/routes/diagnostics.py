@@ -45,6 +45,8 @@ def upstream():
             # כתובת שגויה ב-.env נראית כמו תקלת רשת. resolves=false מזהה את
             # זה מיד, במקום לשלוח לחפש בעיות תעודה או חסימות IP.
             "siriHost": probe.resolve_siri_host(),
+            # למה האימות נכשל, ו-PEM לבניית SIRI_CA_BUNDLE.
+            "siriCertificate": probe.inspect_certificate(),
             "siri": probe.probe_siri(),
             "alerts": probe.probe_alerts(),
         }

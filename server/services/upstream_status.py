@@ -46,7 +46,12 @@ def check() -> bool:
     except Exception as e:
         _reachable = False
         # ההודעה נחשפת ב-/health, ולכן עוברת דרך redact.
-        _reason = redact(f"{type(e).__name__}: {e}")[:200]
+        #
+        # שומרים את הזנב ולא את הראש: requests עוטף את השגיאה האמיתית בתוך
+        # HTTPSConnectionPool(...) ארוך, והסיבה בפועל — SSLCertVerificationError
+        # ומה נכשל בה — יושבת בסוף. קטיעה מלפנים חתכה בדיוק את מה שצריך.
+        message = redact(f"{type(e).__name__}: {e}")
+        _reason = message if len(message) <= 300 else "..." + message[-300:]
         log.error("הקשר למשרד התחבורה נכשל — /arrivals יחזיר 502. %s", _reason)
 
     return _reachable

@@ -6,6 +6,7 @@
 מה-IP שמשרד התחבורה מאשר — ומחזירה את הסיבה בלי הסוד.
 """
 import socket
+import ssl
 import time
 from typing import Any, Optional
 from urllib.parse import urlparse
@@ -85,6 +86,54 @@ def resolve_siri_host() -> dict:
         return {"host": host, "resolves": True, "address": socket.gethostbyname(host)}
     except OSError as e:
         return {"host": host, "resolves": False, "error": str(e)[:120]}
+
+
+def inspect_certificate() -> dict:
+    """
+    מושך את התעודה של שרת SIRI בלי לאמת אותה, כדי לראות למה האימות נכשל.
+
+    שרשרת חסרה, תעודה שפגה ואי-התאמת שם נראות זהות מבחוץ ("SSLCertVerification
+    Error") אבל דורשות תיקון שונה, ולכן צריך את הפרטים עצמם. התעודה היא מידע
+    ציבורי — כל לקוח שמתחבר מקבל אותה.
+    """
+    host = urlparse(SIRI_BASE_URL).hostname or ""
+    result: dict = {"host": host}
+
+    # השגיאה המדויקת מאימות אמיתי — זו שקובעת מה לתקן.
+    context = ssl.create_default_context()
+    try:
+        with socket.create_connection((host, 443), timeout=10) as raw, context.wrap_socket(
+            raw, server_hostname=host
+        ):
+            result["verifies"] = True
+    except ssl.SSLCertVerificationError as e:
+        result["verifies"] = False
+        result["verifyError"] = f"{e.verify_code}: {e.verify_message}"
+    except Exception as e:
+        result["verifies"] = False
+        result["verifyError"] = f"{type(e).__name__}: {str(e)[:150]}"
+
+    # התעודה עצמה, ללא אימות — ממנה נבנה SIRI_CA_BUNDLE אם צריך.
+    # לא ssl.get_server_certificate: הוא מחפש קובץ CA ונופל ב-FileNotFoundError
+    # על חלק מהפלטפורמות. חיבור ידני עם CERT_NONE עובד בכל מקום.
+    unverified = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    unverified.check_hostname = False
+    unverified.verify_mode = ssl.CERT_NONE
+    try:
+        with socket.create_connection((host, 443), timeout=10) as raw, unverified.wrap_socket(
+            raw, server_hostname=host
+        ) as tls:
+            der = tls.getpeercert(binary_form=True)
+            result["pem"] = ssl.DER_cert_to_PEM_cert(der) if der else None
+            # השרשרת המלאה זמינה רק מ-Python 3.10; בלעדיה יש רק את התעודה
+            # עצמה, וזה מספיק כדי להצמיד אותה.
+            chain = getattr(tls, "get_unverified_chain", None)
+            result["chainLength"] = len(chain()) if chain else 1
+    except Exception as e:
+        result["pem"] = None
+        result["pemError"] = f"{type(e).__name__}: {str(e)[:150]}"
+
+    return result
 
 
 def outbound_ip() -> Optional[str]:
