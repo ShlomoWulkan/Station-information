@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import MapView from 'react-native-maps';
 import { router } from 'expo-router';
@@ -20,10 +20,8 @@ export default function MapScreen() {
   const location = useUserLocation();
   const { stations, error: stationsError, loadFor } = useMapStations();
 
-  const locate = useCallback(async () => {
-    const region = await location.locate();
-    if (region) loadFor(region);
-  }, [location, loadFor]);
+  // המפה נטענת מחדש כשהאזור משתנה — onMapReady מטפל בטעינה הראשונה.
+  const locate = location.locate;
 
   const openStation = (station: LocatedStation) => {
     setSelected(null);

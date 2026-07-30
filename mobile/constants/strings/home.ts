@@ -29,7 +29,15 @@ export const recentStrings = {
 
 export const settingsStrings = {
   title: '⚙️ הגדרות',
-  placeholder: 'הגדרות האפליקציה יופיעו כאן',
+  accessibility: 'נגישות',
+  accessibilityHint: 'גודל טקסט, ניגודיות והפחתת תנועה',
+  about: 'אודות',
+  version: (v: string) => `גרסה ${v}`,
+  dataSource: 'הנתונים מסופקים על ידי משרד התחבורה',
+  privacy: 'מדיניות פרטיות',
+  privacyBody:
+    'האפליקציה משתמשת במיקום שלך כדי למצוא תחנות קרובות. המיקום נשלח לשרת ' +
+    'לצורך החיפוש בלבד ואינו נשמר. מועדפים והיסטוריית חיפוש נשמרים במכשיר שלך בלבד.',
 } as const;
 
 export const notFoundStrings = {

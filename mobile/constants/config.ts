@@ -43,3 +43,6 @@ export const MAP_INITIAL_DELTA = 0.01;
 
 /** תאריך עדכון הצהרת הנגישות. לעדכן כשההצהרה נבדקת מחדש. */
 export const A11Y_STATEMENT_UPDATED = 'מרץ 2026';
+
+/** גרסת האפליקציה להצגה. חייבת להתאים ל-version ב-app.config.js. */
+export const APP_VERSION = '1.0.0';

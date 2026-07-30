@@ -1,59 +1,30 @@
-import { useCallback, useEffect, useState } from 'react';
-import * as Location from 'expo-location';
+import { useCallback } from 'react';
 import { MAP_INITIAL_DELTA } from '@/constants/config';
-import { errorStrings } from '@/constants/strings';
+import { getCurrentLocation } from '@/features/search/location';
+import { useAsyncResource } from '@/hooks/useAsyncResource';
 import { regionAround, type MapRegion } from './bounds';
 
 interface Result {
   region: MapRegion | null;
   error: string | null;
   isLoading: boolean;
-  /** מבקש הרשאה ומיקום מחדש. מחזיר את האזור, או null בכשל. */
-  locate: () => Promise<MapRegion | null>;
+  /** מבקש הרשאה ומיקום מחדש. */
+  locate: () => void;
 }
 
 /**
- * הרשאת מיקום ומיקום נוכחי.
+ * המיקום ההתחלתי של המפה.
  *
- * מפריד בין סירוב הרשאה לכשל קבלת מיקום — קודם שני המצבים דווחו באותה הודעה,
- * ולכן משתמש שסירב להרשאה קיבל "שגיאה בטעינת המפה" ולא הבין מה לעשות.
+ * חולק את getCurrentLocation עם מסך החיפוש לפי מיקום, כך שסירוב הרשאה נראה
+ * אותו דבר בשני המקומות.
  */
 export function useUserLocation(): Result {
-  const [region, setRegion] = useState<MapRegion | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const locate = useCallback(async (): Promise<MapRegion | null> => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setError(errorStrings.locationDenied);
-        return null;
-      }
-
-      const position = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      });
-      const next = regionAround(
-        position.coords.latitude,
-        position.coords.longitude,
-        MAP_INITIAL_DELTA,
-      );
-      setRegion(next);
-      return next;
-    } catch {
-      setError(errorStrings.locationFailed);
-      return null;
-    } finally {
-      setIsLoading(false);
-    }
+  const fetcher = useCallback(async () => {
+    const { latitude, longitude } = await getCurrentLocation();
+    return regionAround(latitude, longitude, MAP_INITIAL_DELTA);
   }, []);
 
-  useEffect(() => {
-    void locate();
-  }, [locate]);
+  const { data, error, isLoading, reload } = useAsyncResource(fetcher);
 
-  return { region, error, isLoading, locate };
+  return { region: data, error, isLoading, locate: () => void reload() };
 }
