@@ -16,6 +16,8 @@ interface Props {
   isLoading: boolean;
   isRefreshing: boolean;
   stationCode: string;
+  /** מתי הנתון התקבל — השורות גוזרות ממנו את הספירה לאחור. */
+  updatedAt: number | null;
   onRefresh: () => void;
   onRetry: () => void;
 }
@@ -26,6 +28,7 @@ export function ArrivalsTab({
   isLoading,
   isRefreshing,
   stationCode,
+  updatedAt,
   onRefresh,
   onRetry,
 }: Props) {
@@ -84,6 +87,7 @@ export function ArrivalsTab({
             key={`${arrival.lineNumber}-${arrival.destination}-${arrival.minutesUntilArrival}`}
             arrival={arrival}
             currentStationCode={stationCode}
+            receivedAt={updatedAt}
           />
         ))}
       </ScrollView>

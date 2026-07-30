@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated } from 'react-native';
 import { useAccessibility } from '@/store/accessibilityStore';
 
@@ -20,7 +20,9 @@ export function usePulse({
   durationMs = 750,
 }: Options = {}): Animated.Value {
   const reduceMotion = useAccessibility((s) => s.reduceMotion);
-  const opacity = useRef(new Animated.Value(1)).current;
+  // useState עם initializer ולא useRef().current: קריאת ref בזמן רינדור אינה
+  // חוקית, ו-initializer מבטיח שה-Value נוצר פעם אחת בלבד.
+  const [opacity] = useState(() => new Animated.Value(1));
 
   useEffect(() => {
     if (!enabled || reduceMotion) {

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomNav } from '@/components/BottomNav';
-import { LiveBadge, liveStateFor } from '@/components/LiveBadge';
+import { LiveBadge } from '@/components/LiveBadge';
 import { colors, spacing } from '@/constants/theme';
 import { ArrivalsTab } from '@/features/station/ArrivalsTab';
 import { RoutesTab } from '@/features/station/RoutesTab';
@@ -31,10 +31,7 @@ export default function StationDetailScreen() {
         <StationHeader station={station} />
 
         {tab === 'arrivals' && (
-          <LiveBadge
-            state={liveStateFor(arrivals.updatedAt, arrivals.error !== null)}
-            updatedAt={arrivals.updatedAt}
-          />
+          <LiveBadge updatedAt={arrivals.updatedAt} failed={arrivals.error !== null} />
         )}
 
         <StationTabs active={tab} onChange={setTab} />
@@ -46,6 +43,7 @@ export default function StationDetailScreen() {
             isLoading={arrivals.isLoading}
             isRefreshing={arrivals.isRefreshing}
             stationCode={code}
+            updatedAt={arrivals.updatedAt}
             onRefresh={arrivals.refresh}
             onRetry={arrivals.retry}
           />
