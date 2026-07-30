@@ -9,8 +9,7 @@ import logging
 import threading
 from typing import Optional
 
-from config import api_key_is_real
-from services.probe import redact
+from config import API_KEY, api_key_is_real
 from services.siri_client import fetch_arrivals
 
 log = logging.getLogger(__name__)
@@ -20,6 +19,16 @@ PROBE_STATION = "21472"
 
 _reachable: Optional[bool] = None
 _reason: Optional[str] = None
+
+
+def _redact(text: str) -> str:
+    """
+    מסיר את מפתח ה-API מטקסט.
+
+    חובה: str() של חריגת requests מכיל את ה-URL המלא, ובו ?Key=<המפתח>,
+    וההודעה הזאת נחשפת ב-/health.
+    """
+    return text.replace(API_KEY, "<redacted>") if API_KEY else text
 
 
 def status() -> dict:
@@ -45,12 +54,10 @@ def check() -> bool:
         log.info("הקשר למשרד התחבורה תקין")
     except Exception as e:
         _reachable = False
-        # ההודעה נחשפת ב-/health, ולכן עוברת דרך redact.
-        #
         # שומרים את הזנב ולא את הראש: requests עוטף את השגיאה האמיתית בתוך
-        # HTTPSConnectionPool(...) ארוך, והסיבה בפועל — SSLCertVerificationError
-        # ומה נכשל בה — יושבת בסוף. קטיעה מלפנים חתכה בדיוק את מה שצריך.
-        message = redact(f"{type(e).__name__}: {e}")
+        # HTTPSConnectionPool(...) ארוך, והסיבה בפועל — למשל
+        # SSLCertVerificationError — יושבת בסוף.
+        message = _redact(f"{type(e).__name__}: {e}")
         _reason = message if len(message) <= 300 else "..." + message[-300:]
         log.error("הקשר למשרד התחבורה נכשל — /arrivals יחזיר 502. %s", _reason)
 

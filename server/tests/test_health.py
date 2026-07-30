@@ -44,7 +44,7 @@ def test_siri_failure_is_reported(client, monkeypatch):
 def test_siri_reason_hides_the_api_key(client, monkeypatch):
     """הסיבה גלויה ב-/health, ולכן חייבת לעבור דרך redact."""
     monkeypatch.setattr(upstream_status, "PROBE_STATION", "1")
-    monkeypatch.setattr("services.probe.API_KEY", "TOP-SECRET")
+    monkeypatch.setattr(upstream_status, "API_KEY", "TOP-SECRET")
 
     def boom(_code):
         raise ConnectionError("url ?Key=TOP-SECRET failed")

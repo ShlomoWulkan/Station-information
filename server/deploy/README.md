@@ -100,26 +100,41 @@ curl https://<subdomain>.duckdns.org/arrivals/21472
 
 ---
 
-## אם `/arrivals` מחזיר SSLError
+## תעודת SIRI — נדרש בכל התקנה, ושוב בכל חידוש תעודה
 
-`verify=False` הוסר מ-`siri_client.py` במכוון — הקריאה נושאת את מפתח ה-API,
-וכיבוי אימות התעודה אפשר לכל מי שיכול להתייצב בדרך להתחזה ולקצור אותו.
+`moran.mot.gov.il` מציג את התעודה שלו אבל **לא את תעודת הביניים שחתמה עליו**,
+ולכן הלקוח לא מצליח להשלים שרשרת עד שורש מוכר. השגיאה:
 
-אם התעודה של `moran.mot.gov.il` באמת בעייתית (שרשרת חסרה קורה בשרתים
-ממשלתיים), **אל תחזיר `verify=False`**. במקום זה:
+```
+CERTIFICATE_VERIFY_FAILED: unable to get local issuer certificate
+```
+
+התקלה בצד שלהם. `verify=False` הוסר במכוון — הקריאה נושאת את מפתח ה-API,
+וכיבוי האימות מאפשר לכל מי שיכול להתייצב בדרך להתחזות ולקצור אותו.
+**אל תחזיר אותו.** במקום זה, מריצים פעם אחת:
 
 ```bash
-openssl s_client -showcerts -connect moran.mot.gov.il:443 </dev/null \
-  > /opt/midaa-tachana/server/certs/mot-ca.pem
+cd ~/apps/Station-information/server
+bash scripts/fetch-siri-ca.sh
 ```
 
-והוסף ל-`.env`:
+הסקריפט קורא מתוך התעודה איפה להוריד את החוליה החסרה (הרחבת AIA), מוריד
+אותה, משרשר עם שורשי המערכת, ומאמת מול השרת החי לפני שהוא מכריז על הצלחה.
+בסוף הוא מדפיס שורה להעתקה ל-`.env`:
 
 ```
-SIRI_CA_BUNDLE=/opt/midaa-tachana/server/certs/mot-ca.pem
+SIRI_CA_BUNDLE=/home/<user>/apps/Station-information/server/certs/mot-ca.pem
 ```
 
-כך האימות נשאר פעיל ומצומצם למי שאתה סומך עליו, במקום כבוי מול כל העולם.
+הפעל מחדש, ואמת:
+
+```bash
+curl -s localhost:5000/health    # "siriReachable": true
+```
+
+**להריץ שוב כשהתעודה מתחדשת.** התוקף של `*.mot.gov.il` נכון להיום הוא
+דצמבר 2026; כשהיא תתחלף, `/health` יראה `siriReachable: false` עם אותה
+שגיאה, וההרצה מחדש תפתור.
 
 ## לוגים
 

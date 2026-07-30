@@ -46,9 +46,6 @@ PORT = _int_env("PORT", 5000)
 HOST = os.getenv("HOST", "127.0.0.1")
 DEBUG = os.getenv("FLASK_DEBUG", "").lower() in ("1", "true", "yes")
 
-# טוקן לנתיב האבחון. ריק = הנתיב לא נרשם כלל, וזו ברירת המחדל הבטוחה.
-DIAG_TOKEN = os.getenv("DIAG_TOKEN", "")
-
 # ── timeouts ────────────────────────────────────────────────────────────────
 
 SIRI_TIMEOUT = _int_env("SIRI_TIMEOUT", 10)

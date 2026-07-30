@@ -19,6 +19,9 @@ def get_alerts():
 
     [{ "id": "1", "header": "עיכובים בקו 5", "description": "...",
        "routes": ["5"], "stops": [] }, ...]
+
+    ⚠️ מחזיר כרגע [] תמיד — הכתובת אינה מצביעה על פיד קיים. ראה
+    services/alerts_client.py. אין לחבר לממשק לפני שיש פיד מאומת.
     """
     cached = cache.get("alerts", CACHE_TTL_ALERTS)
     if cached is not None:
