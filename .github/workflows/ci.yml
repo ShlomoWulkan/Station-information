@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [master, dev]
+  pull_request:
+
+jobs:
+  server:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          # תואם לסביבת הפיתוח — סינטקס של 3.10 לא יעבור שם.
+          python-version: '3.9'
+          cache: pip
+          cache-dependency-path: server/requirements.txt
+
+      - run: pip install -r requirements.txt ruff pytest
+
+      - name: ruff
+        run: ruff check .
+
+      # הבדיקות אינן מורידות GTFS ואינן פונות למשרד התחבורה — הן ירוקות
+      # גם בלי גישה מה-IP המאושר.
+      - name: pytest
+        run: pytest tests/ -q
+
+  mobile:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: mobile/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: typecheck
+        run: pnpm exec tsc --noEmit
+
+      - name: eslint
+        run: pnpm exec eslint .
+
+  file-size:
+    # כלל 100 השורות נאכף כאן, אחרת הוא נשחק חזרה בשקט.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: no source file over 100 lines
+        run: |
+          over=$(find mobile server -type f \( -name '*.ts' -o -name '*.tsx' -o -name '*.py' \) \
+            -not -path '*/node_modules/*' -not -path '*/venv/*' \
+            -not -path '*/__pycache__/*' -not -path '*/.expo/*' \
+            -not -name 'expo-env.d.ts' \
+            -exec wc -l {} + | awk '$1 > 100 && $2 != "total"')
+          if [ -n "$over" ]; then
+            echo "קבצים מעל 100 שורות:"
+            echo "$over"
+            exit 1
+          fi
+          echo "כל הקבצים מתחת ל-100 שורות"
