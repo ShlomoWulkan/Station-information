@@ -11,13 +11,10 @@ from typing import Optional
 
 from defusedxml import ElementTree as ET
 
+from arrival_ids import ensure_unique, journey_id
+from siri_xml import first_text, tag
+
 log = logging.getLogger(__name__)
-
-NS = "http://www.siri.org.uk/siri"
-
-
-def _tag(name: str) -> str:
-    return f"{{{NS}}}{name}"
 
 
 def _minutes_until(iso_time: str) -> Optional[int]:
@@ -37,46 +34,6 @@ def _minutes_until(iso_time: str) -> Optional[int]:
     return max(0, int((arrival - now).total_seconds() // 60))
 
 
-def _first_text(element, *names: str) -> str:
-    """הטקסט של השדה הראשון שקיים מבין השמות."""
-    for name in names:
-        text = element.findtext(_tag(name), "")
-        if text:
-            return text
-    return ""
-
-
-def _journey_id(visit, journey, line: str, timestamp: str) -> str:
-    """
-    מזהה לנסיעה בודדת, ממה ש-SIRI כבר נותן.
-
-    נופל לחותמת הזמן המלאה ולא לדקות המעוגלות — שני אוטובוסים של אותו קו
-    שמגיעים באותה דקה זה מצב לגיטימי, וזה בדיוק מה שייצר מפתחות כפולים.
-    """
-    identifier = (
-        visit.findtext(_tag("ItemIdentifier"), "")
-        or _first_text(journey, "VehicleRef", "DatedVehicleJourneyRef")
-        or journey.findtext(f".//{_tag('DatedVehicleJourneyRef')}", "")
-    )
-    return identifier or f"{line}|{timestamp}"
-
-
-def _ensure_unique_ids(rows: list[dict]) -> None:
-    """
-    מוסיף סיומת למזהים שחוזרים על עצמם.
-
-    הערובה בפועל: היא לא תלויה בשאלה אילו שדות SIRI שלח, ולכן מפתחות כפולים
-    לא יכולים לחזור גם אם הפורמט ישתנה.
-    """
-    seen: dict[str, int] = {}
-    for row in rows:
-        base = row["id"]
-        count = seen.get(base, 0)
-        seen[base] = count + 1
-        if count:
-            row["id"] = f"{base}#{count}"
-
-
 def parse_arrivals(xml_text: str) -> list[dict]:
     """
     מנתח XML של SIRI לרשימת נסיעות, הקרובה קודם.
@@ -91,17 +48,17 @@ def parse_arrivals(xml_text: str) -> list[dict]:
     results = []
     skipped = 0
 
-    for visit in root.iter(_tag("MonitoredStopVisit")):
-        journey = visit.find(f".//{_tag('MonitoredVehicleJourney')}")
+    for visit in root.iter(tag("MonitoredStopVisit")):
+        journey = visit.find(f".//{tag('MonitoredVehicleJourney')}")
         if journey is None:
             continue
 
-        call = journey.find(_tag("MonitoredCall"))
+        call = journey.find(tag("MonitoredCall"))
         if call is None:
             continue
 
-        expected = _first_text(call, "ExpectedArrivalTime", "ExpectedDepartureTime")
-        aimed = _first_text(call, "AimedArrivalTime", "AimedDepartureTime")
+        expected = first_text(call, "ExpectedArrivalTime", "ExpectedDepartureTime")
+        aimed = first_text(call, "AimedArrivalTime", "AimedDepartureTime")
 
         # זמן צפוי מגיע ממערכת הזמן-אמת; זמן מתוכנן הוא מלוח הזמנים.
         is_real_time = bool(expected)
@@ -110,16 +67,16 @@ def parse_arrivals(xml_text: str) -> list[dict]:
             skipped += 1
             continue
 
-        line = journey.findtext(_tag("PublishedLineName"), "")
+        line = journey.findtext(tag("PublishedLineName"), "")
         results.append(
             {
-                "id": _journey_id(visit, journey, line, expected or aimed),
+                "id": journey_id(visit, journey, line, expected or aimed),
                 "lineNumber": line,
                 # משרד התחבורה שולח DestinationRef (קוד תחנה) ולא DestinationName.
-                # התרגום לשם נעשה מול GTFS ב-services/destinations.py, כדי שהמודול
-                # הזה יישאר פיענוח טהור בלי תלות בנתוני GTFS.
-                "destination": journey.findtext(_tag("DestinationName"), ""),
-                "destinationRef": journey.findtext(_tag("DestinationRef"), ""),
+                # התרגום לשם נעשה ב-services/destinations.py, כדי שהמודול הזה
+                # יישאר פיענוח טהור בלי תלות בנתוני GTFS.
+                "destination": journey.findtext(tag("DestinationName"), ""),
+                "destinationRef": journey.findtext(tag("DestinationRef"), ""),
                 "minutesUntilArrival": minutes,
                 "isRealTime": is_real_time,
             }
@@ -129,5 +86,5 @@ def parse_arrivals(xml_text: str) -> list[dict]:
         log.info("%d נסיעות דולגו — זמן חסר או לא ניתן לפיענוח", skipped)
 
     results.sort(key=lambda r: r["minutesUntilArrival"])
-    _ensure_unique_ids(results)
+    ensure_unique(results)
     return results

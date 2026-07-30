@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ScrollView, TextInput, RefreshControl, Text } from 'react-native';
+import { FlatList, TextInput, RefreshControl, Text, View } from 'react-native';
 import { BusArrivalRow } from '@/components/BusArrivalRow';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
@@ -39,7 +39,6 @@ export function ArrivalsTab({
   const visible = trimmed ? arrivals.filter((a) => a.lineNumber.includes(trimmed)) : arrivals;
 
   const hasData = arrivals.length > 0;
-  const showEmpty = !isLoading && error === null && visible.length === 0;
 
   return (
     <>
@@ -54,8 +53,18 @@ export function ArrivalsTab({
         accessibilityLabel={stationStrings.filterLabel}
       />
 
-      <ScrollView
-        style={styles.list}
+      {/* FlatList ולא ScrollView: תחנה מרכזית מחזירה עשרות נסיעות, וללא
+          וירטואליזציה כולן מרונדרות בבת אחת. */}
+      <FlatList
+        data={visible}
+        keyExtractor={(arrival) => arrival.id}
+        renderItem={({ item }) => (
+          <BusArrivalRow
+            arrival={item}
+            currentStationCode={stationCode}
+            receivedAt={updatedAt}
+          />
+        )}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -64,33 +73,26 @@ export function ArrivalsTab({
             tintColor={colors.accent}
           />
         }
-      >
-        {isLoading && !hasData && <LoadingState />}
-
-        {error !== null && !hasData && <ErrorState message={error} onRetry={onRetry} />}
-
-        {/* כשל רענון כשיש כבר נתון — הערה, בלי למחוק את הקיים */}
-        {error !== null && hasData && (
-          <Text style={[styles.staleNote, { fontSize: font(12) }]}>
-            {error} {stationStrings.showingLastKnown}
-          </Text>
-        )}
-
-        {showEmpty && (
-          <EmptyState
-            title={hasData ? stationStrings.noFilterMatch(trimmed) : stationStrings.noArrivals}
-          />
-        )}
-
-        {visible.map((arrival) => (
-          <BusArrivalRow
-            key={arrival.id}
-            arrival={arrival}
-            currentStationCode={stationCode}
-            receivedAt={updatedAt}
-          />
-        ))}
-      </ScrollView>
+        ListHeaderComponent={
+          <View>
+            {isLoading && !hasData && <LoadingState />}
+            {error !== null && !hasData && <ErrorState message={error} onRetry={onRetry} />}
+            {/* כשל רענון כשיש כבר נתון — הערה, בלי למחוק את הקיים */}
+            {error !== null && hasData && (
+              <Text style={[styles.staleNote, { fontSize: font(12) }]}>
+                {error} {stationStrings.showingLastKnown}
+              </Text>
+            )}
+          </View>
+        }
+        ListEmptyComponent={
+          !isLoading && error === null ? (
+            <EmptyState
+              title={hasData ? stationStrings.noFilterMatch(trimmed) : stationStrings.noArrivals}
+            />
+          ) : null
+        }
+      />
     </>
   );
 }
