@@ -27,6 +27,11 @@ module.exports = {
             'האפליקציה צריכה גישה למיקום כדי למצוא תחנות קרובות',
         },
       ],
+      // אנדרואיד 9+ חוסם HTTP גלוי. מותר בפיתוח בלבד, כדי שהיעדר HTTPS ייכשל
+      // בבירור בבילד production ולא יגיע לחנות בשקט. חייב לשבת דווקא כאן:
+      // `android.usesCleartextTraffic` בקונפיג כבר לא מטופל ב-SDK 54, ולכן הוא
+      // נבלע בשקט ולא מגיע ל-manifest.
+      ['expo-build-properties', { android: { usesCleartextTraffic: IS_DEV } }],
     ],
 
     android: {
@@ -39,9 +44,6 @@ module.exports = {
       config: {
         googleMaps: { apiKey: process.env.GOOGLE_MAPS_API_KEY_ANDROID },
       },
-      // אנדרואיד 9+ חוסם HTTP גלוי. מותר בפיתוח בלבד, כדי שהיעדר HTTPS
-      // ייכשל בבירור בבילד production ולא יגיע לחנות בשקט.
-      usesCleartextTraffic: IS_DEV,
     },
 
     ios: {
