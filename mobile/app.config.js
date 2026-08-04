@@ -10,10 +10,11 @@ const IS_DEV = process.env.APP_VARIANT === 'development';
 module.exports = {
   expo: {
     name: 'מידע תחנה',
-    slug: 'midaa-tachana',
+    slug: 'station-info',
+    owner: 'sw323',
     version: '1.0.0',
     orientation: 'portrait',
-    scheme: 'midaatachana',
+    scheme: 'stationinfo',
     userInterfaceStyle: 'dark',
     newArchEnabled: true,
 
@@ -29,7 +30,7 @@ module.exports = {
     ],
 
     android: {
-      package: 'com.midaatachana.app',
+      package: 'com.stationinfo.app',
       adaptiveIcon: { backgroundColor: '#000d28' },
       permissions: [
         'android.permission.ACCESS_COARSE_LOCATION',
@@ -44,7 +45,7 @@ module.exports = {
     },
 
     ios: {
-      bundleIdentifier: 'com.midaatachana.app',
+      bundleIdentifier: 'com.stationinfo.app',
       infoPlist: {
         // מקביל ל-usesCleartextTraffic: ATS חוסם HTTP, ונפתח בפיתוח בלבד.
         NSAppTransportSecurity: { NSAllowsArbitraryLoads: IS_DEV },
@@ -55,7 +56,7 @@ module.exports = {
 
     extra: {
       router: {},
-      eas: { projectId: 'd1a271b1-1613-4397-b866-f36d4b506a49' },
+      eas: { projectId: 'e6ae7b4e-d5c0-4b14-953c-9cbbe353942a' },
     },
   },
 };

@@ -30,8 +30,35 @@
 `APIs & Services` → `Credentials` → המפתח → `Edit`:
 
 - **Application restrictions**: `Android apps`
-- הוסף: package name `com.midaatachana.app` + טביעת SHA-1 של מפתח החתימה
+- הוסף: package name `com.stationinfo.app` + טביעת SHA-1 של מפתח החתימה
 - **API restrictions**: `Restrict key` → `Maps SDK for Android` בלבד
+
+**שניהם השתנו.** ה-package היה `com.midaatachana.app`, וה-SHA-1 גם הוא חדש: את
+פרויקט ה-EAS היה צריך ליצור מחדש (ראה למטה), ופרויקט חדש מייצר keystore חדש.
+אם ההגבלה בקונסולה עדיין מצביעה על הישנים, המפה תעלה ריקה בבילד חתום ובלי
+שגיאה מדברת — התיקון הוא בקונסולה, לא בקוד.
+
+**הוסף גם את ה-SHA-1 של keystore הדיבאג לאותה הגבלה.** `expo run:android` חותם
+עם `android/app/debug.keystore` ולא עם המפתח של EAS, ולכן בלעדיו המפה תהיה ריקה
+דווקא בבילד המקומי — כשל שקל לפרש בטעות כתקלה בקוד. הטביעה:
+
+```
+5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25
+```
+
+לקריאה חוזרת (`keytool` מגיע עם ה-JBR של Android Studio):
+
+```powershell
+& "C:\Program Files\Android\Android Studio\jbr\bin\keytool.exe" -list -v `
+  -keystore android\app\debug.keystore -alias androiddebugkey `
+  -storepass android -keypass android
+```
+
+**מה ההגבלה הזו שווה:** כמעט כלום. `debug.keystore` מגיע מתבנית React Native,
+והטביעה הזו זהה בכל פרויקט RN בעולם — כל אחד יכול לחתום APK עם `package`
+`com.stationinfo.app` ולעבור אותה. ההגנה האמיתית כאן היא תקרת המכסה היומית
+וההגבלה ל-`Maps SDK for Android`. ההידוק הנכון, כשמגיעים לבילד לחנות, הוא
+מפתח נפרד לפרודקשן שמוגבל ל-SHA-1 של EAS ומוזרק ב-`eas env:set`.
 
 לקבלת ה-SHA-1 של מפתח החתימה של EAS:
 
@@ -51,14 +78,40 @@ eas credentials
 
 ### 4. הזרקה לבילדים
 
+`mobile/.env` הוא מקומי בלבד ולא מגיע לבילד בענן. `eas secret:create` ו-
+`eas env:create` הוצאו משימוש, אחד אחרי השני. הפקודה הנוכחית:
+
 ```powershell
 cd mobile
-eas secret:create --scope project --name GOOGLE_MAPS_API_KEY_ANDROID --value <המפתח החדש>
+eas env:set --scope project --name GOOGLE_MAPS_API_KEY_ANDROID `
+  --value <המפתח החדש> --environment production --environment preview `
+  --visibility sensitive
 ```
+
+`sensitive` ולא `plaintext`: הערך מוסתר בלוגים ובדשבורד, אבל עדיין נחשף לבילד.
+`secret` היה מונע גם קריאה חזרה — ולא שמיש כאן, כי המפתח נצרב ל-manifest.
 
 ### 5. התראת תקציב — רשת ביטחון שנייה
 
 `Billing` → `Budgets & alerts` → תקציב עם התראות ב-50%/90%/100%.
+
+---
+
+## פרויקט EAS — נוצר מחדש בשינוי השם
+
+ה-slug השתנה מ-`midaa-tachana` ל-`station-info`, ו-project ID של EAS קשור ל-slug
+יחיד **שלא ניתן לשינוי** ([expo.fyi/eas-project-id](https://expo.fyi/eas-project-id)).
+לכן נוצר פרויקט חדש: `@sw323/station-info`, ID `e6ae7b4e-d5c0-4b14-953c-9cbbe353942a`.
+
+מה שזה גורר:
+
+- **keystore חדש** נוצר בבילד הראשון, ומכאן ה-SHA-1 החדש בצעד 2.
+- הפרויקט הישן `@sw323/midaa-tachana` נשאר בדשבורד עם המפתח הישן. הוא לא בשימוש.
+- זה היה אפשרי רק **לפני** פרסום. אחרי שהאפליקציה בחנות, חנות Play מקבלת עדכון
+  רק מהחתימה המקורית, והחלפת keystore הופכת לבלתי אפשרית.
+
+`app.config.js` הוא קונפיג דינמי, ולכן `eas init` לא יכול לכתוב אליו את ה-ID —
+הוא מדפיס אותו וצריך להדביק ל-`extra.eas.projectId` ידנית. זה צפוי, לא תקלה.
 
 ---
 

@@ -5,6 +5,11 @@
 > פריסה למכונה אחרת `/arrivals` יחזיר 401, זו הסיבה, והמפתח לא פג.
 > ראה `docs/SECRETS.md`.
 
+> **המכונה החיה מותקנת תחת השמות הישנים.** ההוראות כאן מתארות התקנה חדשה בשם
+> `station-info`, אבל 204.168.150.129 הותקנה לפני שינוי השם: היוניט שם נקרא
+> `midaa-tachana`, המשתמש `midaa`, והקוד ב-`/opt/midaa-tachana`. בעבודה על
+> המכונה הקיימת — החלף בשמות האלה, במיוחד בפרק "עדכון" ובפקודות `journalctl`.
+
 ## מה רץ איפה
 
 ```
@@ -19,28 +24,28 @@ Caddy הוא היחיד שמאזין לאינטרנט. gunicorn מאזין ל-12
 תעודת TLS מונפקת לשם, לא ל-IP חשוף. תת-דומיין DuckDNS חינמי ומספיק:
 
 1. הירשם ב-duckdns.org (חשבון גוגל).
-2. צור תת-דומיין, למשל `midaa-tachana`.
+2. צור תת-דומיין, למשל `station-info`.
 3. הגדר את ה-IP ל-`204.168.150.129`.
 4. עדכן את השם ב-`Caddyfile`.
 
 ## 2. המשתמש והקוד
 
 ```bash
-sudo useradd --system --create-home --shell /usr/sbin/nologin midaa
-sudo mkdir -p /opt/midaa-tachana
-sudo chown midaa:midaa /opt/midaa-tachana
+sudo useradd --system --create-home --shell /usr/sbin/nologin stationinfo
+sudo mkdir -p /opt/station-info
+sudo chown stationinfo:stationinfo /opt/station-info
 
-sudo -u midaa git clone https://github.com/ShlomoWulkan/Station-information.git /opt/midaa-tachana
-cd /opt/midaa-tachana/server
-sudo -u midaa python3 -m venv venv
-sudo -u midaa ./venv/bin/pip install -r requirements.txt
+sudo -u stationinfo git clone https://github.com/ShlomoWulkan/Station-information.git /opt/station-info
+cd /opt/station-info/server
+sudo -u stationinfo python3 -m venv venv
+sudo -u stationinfo ./venv/bin/pip install -r requirements.txt
 ```
 
 ## 3. הסודות
 
 ```bash
-sudo -u midaa cp .env.example .env
-sudo -u midaa nano .env      # הכנס את API_KEY האמיתי
+sudo -u stationinfo cp .env.example .env
+sudo -u stationinfo nano .env      # הכנס את API_KEY האמיתי
 sudo chmod 600 .env
 ```
 
@@ -49,10 +54,10 @@ sudo chmod 600 .env
 ## 4. השירות
 
 ```bash
-sudo cp deploy/midaa-tachana.service /etc/systemd/system/
+sudo cp deploy/station-info.service /etc/systemd/system/
 sudo systemctl daemon-reload
-sudo systemctl enable --now midaa-tachana
-sudo systemctl status midaa-tachana
+sudo systemctl enable --now station-info
+sudo systemctl status station-info
 ```
 
 העלייה לוקחת דקה או שתיים: מורידים 140MB של GTFS, טוענים ~35 אלף תחנות, ואז
@@ -139,8 +144,8 @@ curl -s localhost:5000/health    # "siriReachable": true
 ## לוגים
 
 ```bash
-sudo journalctl -u midaa-tachana -f
-sudo journalctl -u midaa-tachana --since "1 hour ago" -p warning
+sudo journalctl -u station-info -f
+sudo journalctl -u station-info --since "1 hour ago" -p warning
 ```
 
 `LOG_LEVEL=DEBUG` ב-`.env` מרחיב. כישלון בטעינת הקווים נרשם עם traceback —
@@ -149,7 +154,7 @@ sudo journalctl -u midaa-tachana --since "1 hour ago" -p warning
 ## עדכון
 
 ```bash
-cd /opt/midaa-tachana && sudo -u midaa git pull
-sudo -u midaa ./server/venv/bin/pip install -r server/requirements.txt
-sudo systemctl restart midaa-tachana
+cd /opt/station-info && sudo -u stationinfo git pull
+sudo -u stationinfo ./server/venv/bin/pip install -r server/requirements.txt
+sudo systemctl restart station-info
 ```

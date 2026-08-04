@@ -7,13 +7,13 @@
 # אבל רק בפרופיל shortlived (תעודות ל-6 ימים), ול-Caddy יש באג פתוח בנתיב
 # הזה. עם שם זה פשוט עובד. תת-דומיין DuckDNS חינמי ומספיק.
 
-midaa-tachana.duckdns.org {
+station-info.duckdns.org {
 	reverse_proxy 127.0.0.1:5000
 
 	# X-Forwarded-For וכו' מועברים כברירת מחדל. הלוג נחוץ כדי לראות תעבורה
 	# אמיתית — לשרת עצמו אין access log.
 	log {
-		output file /var/log/caddy/midaa-tachana.log
+		output file /var/log/caddy/station-info.log
 		format console
 	}
 
