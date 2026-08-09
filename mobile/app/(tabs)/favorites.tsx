@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
   safe: { flex: 1, paddingHorizontal: spacing.lg },
   title: {
     fontWeight: '900',
-    textAlign: 'right',
     paddingTop: spacing.lg,
     marginBottom: spacing.lg,
   },

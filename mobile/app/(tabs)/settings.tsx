@@ -68,9 +68,9 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   bg: { flex: 1, backgroundColor: colors.bg },
   safe: { flex: 1, paddingHorizontal: spacing.lg },
-  title: { fontWeight: '900', textAlign: 'right', paddingTop: spacing.lg },
+  title: { fontWeight: '900', paddingTop: spacing.lg },
   content: { paddingTop: spacing.md, paddingBottom: spacing.xl, gap: spacing.xs },
-  section: { fontWeight: '700', textAlign: 'right', marginTop: spacing.md },
+  section: { fontWeight: '700', marginTop: spacing.md },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -81,9 +81,11 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     gap: spacing.sm,
   },
-  cardText: { flex: 1, alignItems: 'flex-end' },
+  // בלי alignItems: הילדים נמתחים לרוחב והיישור האוטומטי מצמיד אותם לתחילת
+  // הכיוון. 'flex-end' היה מצמיד אותם דווקא לקצה השני ב-RTL.
+  cardText: { flex: 1 },
   cardTitle: { fontWeight: '800' },
-  cardSub: { marginTop: 2, textAlign: 'right' },
+  cardSub: { marginTop: 2 },
   arrow: { color: colors.accent },
-  body: { flex: 1, textAlign: 'right', lineHeight: 19 },
+  body: { flex: 1, lineHeight: 19 },
 });

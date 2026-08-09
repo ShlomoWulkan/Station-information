@@ -49,7 +49,6 @@ export function ArrivalsTab({
         placeholder={stationStrings.filterPlaceholder}
         placeholderTextColor={c.textSub}
         keyboardType="number-pad"
-        textAlign="right"
         accessibilityLabel={stationStrings.filterLabel}
       />
 

@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
     marginBottom: spacing.xl,
   },
-  back: { marginLeft: spacing.md, padding: spacing.xs },
+  back: { marginEnd: spacing.md, padding: spacing.xs },
   backIcon: { color: colors.textSub },
   title: { flex: 1, fontWeight: '800', textAlign: 'center' },
   action: { padding: spacing.xs },

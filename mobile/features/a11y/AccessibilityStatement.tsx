@@ -24,6 +24,6 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     marginBottom: spacing.lg,
   },
-  text: { fontSize: 12, color: colors.textSub, textAlign: 'right', lineHeight: 18 },
-  date: { fontSize: 11, color: 'rgba(180,210,255,0.3)', textAlign: 'right' },
+  text: { fontSize: 12, color: colors.textSub, lineHeight: 18 },
+  date: { fontSize: 11, color: 'rgba(180,210,255,0.3)' },
 });

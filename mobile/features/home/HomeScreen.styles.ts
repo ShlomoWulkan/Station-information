@@ -10,8 +10,8 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingTop: spacing.lg,
   },
-  title: { fontWeight: '900', letterSpacing: -0.5, textAlign: 'right' },
-  tagline: { marginTop: 3, textAlign: 'right' },
+  title: { fontWeight: '900', letterSpacing: -0.5 },
+  tagline: { marginTop: 3 },
   busIconWrap: {
     width: 52,
     height: 52,

@@ -9,7 +9,6 @@ export const styles = StyleSheet.create({
     borderRadius: radius.md,
     padding: spacing.md,
     marginBottom: spacing.md,
-    textAlign: 'right',
   },
   list: { flex: 1 },
   staleNote: { color: colors.warning, textAlign: 'center', paddingVertical: spacing.sm },

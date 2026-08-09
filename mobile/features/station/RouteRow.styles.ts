@@ -18,6 +18,6 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   number: { color: colors.onAccent, fontWeight: '900' },
-  destination: { flex: 1, textAlign: 'right' },
+  destination: { flex: 1 },
   arrow: { color: colors.textSub, fontWeight: '300' },
 });

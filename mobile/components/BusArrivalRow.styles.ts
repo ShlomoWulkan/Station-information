@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 6,
   },
   lineNum: { color: colors.onAccent, fontWeight: '900' },
-  destination: { flex: 1, textAlign: 'right' },
+  destination: { flex: 1 },
   timeBadge: {
     backgroundColor: colors.card,
     borderWidth: 1,

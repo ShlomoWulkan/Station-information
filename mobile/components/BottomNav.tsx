@@ -8,13 +8,14 @@ import { useA11y } from '@/hooks/useA11y';
 /**
  * שורת ניווט תחתונה למסכים שמחוץ ל-(tabs).
  *
- * הסדר מימין לשמאל — בית מימין, בהתאם ל-RTL ולסדר ב-(tabs)/_layout.
+ * הסדר כאן הוא סדר הקריאה: ב-RTL הראשון נרנדר בקצה הימני. חייב להישאר זהה
+ * לסדר ב-(tabs)/_layout, אחרת הניווט התחתון קופץ בין מסכים.
  */
 const ITEMS = [
-  { emoji: '⚙️', label: commonStrings.nav.settings, go: () => router.navigate('/(tabs)/settings') },
-  { emoji: '🗺️', label: commonStrings.nav.map, go: () => router.navigate('/(tabs)/map') },
-  { emoji: '⭐', label: commonStrings.nav.favorites, go: () => router.navigate('/(tabs)/favorites') },
   { emoji: '🏠', label: commonStrings.nav.home, go: () => router.dismissAll() },
+  { emoji: '⭐', label: commonStrings.nav.favorites, go: () => router.navigate('/(tabs)/favorites') },
+  { emoji: '🗺️', label: commonStrings.nav.map, go: () => router.navigate('/(tabs)/map') },
+  { emoji: '⚙️', label: commonStrings.nav.settings, go: () => router.navigate('/(tabs)/settings') },
 ] as const;
 
 export function BottomNav() {

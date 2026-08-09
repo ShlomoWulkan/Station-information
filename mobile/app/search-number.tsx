@@ -41,7 +41,6 @@ export default function SearchNumberScreen() {
             placeholder={searchStrings.byNumberPlaceholder}
             placeholderTextColor={c.textSub}
             keyboardType="number-pad"
-            textAlign="right"
             onSubmitEditing={submit}
             accessibilityLabel={searchStrings.byNumberLabel}
           />

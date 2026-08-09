@@ -15,10 +15,11 @@ export const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.08)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: spacing.sm,
+    marginStart: spacing.sm,
   },
   closeText: { color: colors.text, fontWeight: '700' },
-  info: { flex: 1, alignItems: 'flex-end' },
+  // בלי alignItems: הילדים נמתחים והיישור האוטומטי מצמיד לתחילת הכיוון.
+  info: { flex: 1 },
   name: { fontWeight: '800' },
   code: { marginTop: 2 },
   favBtn: { padding: spacing.xs },

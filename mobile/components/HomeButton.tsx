@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   },
   neon: {
     position: 'absolute',
-    right: 0,
+    start: 0,
     top: 10,
     bottom: 10,
     width: 3,
@@ -74,8 +74,8 @@ const styles = StyleSheet.create({
   },
   iconText: { fontSize: 18 },
   textWrap: { flex: 1 },
-  title: { fontSize: 13, fontWeight: '700', color: colors.text, textAlign: 'right' },
-  subtitle: { fontSize: 10, color: colors.textSub, marginTop: 2, textAlign: 'right' },
+  title: { fontSize: 13, fontWeight: '700', color: colors.text },
+  subtitle: { fontSize: 10, color: colors.textSub, marginTop: 2 },
   arrow: { fontSize: 18, color: 'rgba(180,210,255,0.2)' },
   badge: {
     backgroundColor: colors.badgeBg,

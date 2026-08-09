@@ -54,7 +54,9 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   button: {
     position: 'absolute',
-    left: 16,
+    // end ולא left: ב-RTL הוא הצד השמאלי של המסך, ושם הכפתור לא מכסה את
+    // תחילת השורות. `left` היה מוחלף על ידי RTL וקופץ דווקא לימין.
+    end: 16,
     width: 44,
     height: 44,
     borderRadius: 22,

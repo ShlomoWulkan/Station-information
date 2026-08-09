@@ -28,18 +28,13 @@ export default function TabLayout() {
         tabBarLabelStyle: { fontSize: 10, fontWeight: '700' },
       }}
     >
+      {/* הסדר כאן הוא סדר הקריאה: ב-RTL הראשון נרנדר בקצה הימני. הצהרה
+          הפוכה הייתה מפילה את "בית" לקצה השמאלי. */}
       <Tabs.Screen
-        name="settings"
+        name="index"
         options={{
-          title: 'הגדרות',
-          tabBarIcon: ({ color }) => <TabIcon emoji="⚙️" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="map"
-        options={{
-          title: 'מפה',
-          tabBarIcon: ({ color }) => <TabIcon emoji="🗺️" color={color} />,
+          title: 'בית',
+          tabBarIcon: ({ color }) => <TabIcon emoji="🏠" color={color} />,
         }}
       />
       <Tabs.Screen
@@ -50,10 +45,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="index"
+        name="map"
         options={{
-          title: 'בית',
-          tabBarIcon: ({ color }) => <TabIcon emoji="🏠" color={color} />,
+          title: 'מפה',
+          tabBarIcon: ({ color }) => <TabIcon emoji="🗺️" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'הגדרות',
+          tabBarIcon: ({ color }) => <TabIcon emoji="⚙️" color={color} />,
         }}
       />
     </Tabs>
